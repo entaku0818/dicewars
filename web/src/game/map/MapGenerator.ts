@@ -20,8 +20,10 @@ export class MapGenerator {
 
   generateMap(): Map<string, Territory> {
     const territories = new Map<string, Territory>();
-    const cells = this.generateVoronoiCells();
-
+    
+    // グリッドベースでマップ全体を敷き詰める
+    const cells = this.createHexGrid();
+    
     cells.forEach((cell, index) => {
       const territory: Territory = {
         id: `territory-${index}`,
@@ -29,7 +31,7 @@ export class MapGenerator {
         diceCount: 0,
         position: cell.center,
         adjacentTerritoryIds: cell.neighbors,
-        vertices: cell.vertices, // 多角形の頂点
+        vertices: cell.vertices,
       };
       territories.set(territory.id, territory);
     });
@@ -37,199 +39,167 @@ export class MapGenerator {
     return territories;
   }
 
-  private generateVoronoiCells(): VoronoiCell[] {
-    // ランダムな点を生成（境界から少し離す）
-    const points = this.generateRandomPoints();
-    
-    // 簡易的なボロノイ図の実装
+  private createHexGrid(): VoronoiCell[] {
     const cells: VoronoiCell[] = [];
+    const hexRadius = 40;
+    const hexHeight = hexRadius * Math.sqrt(3);
+    const hexWidth = hexRadius * 2;
     
-    points.forEach((point, index) => {
-      const neighbors = this.findNeighbors(point, points, index);
-      const vertices = this.generateCellVertices(point, points, index);
-      
-      cells.push({
-        id: `territory-${index}`,
-        center: point,
-        vertices: vertices,
-        neighbors: neighbors.map(n => `territory-${n}`),
-      });
-    });
-
+    // グリッドの行と列を計算
+    const cols = Math.floor((this.width - 40) / (hexWidth * 0.75)) + 1;
+    const rows = Math.floor((this.height - 40) / hexHeight) + 1;
+    
+    // 実際の領土数を調整
+    const targetCount = Math.min(this.territoryCount, cols * rows);
+    const skipPattern = this.generateSkipPattern(cols * rows, targetCount);
+    
+    let cellIndex = 0;
+    let gridIndex = 0;
+    
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        // ランダムにいくつかのセルをスキップして自然な形にする
+        if (skipPattern[gridIndex++]) {
+          continue;
+        }
+        
+        // オフセット（偶数行は右にずらす）
+        const offset = row % 2 === 0 ? 0 : hexWidth * 0.375;
+        
+        const center: Position = {
+          x: 40 + col * hexWidth * 0.75 + offset,
+          y: 40 + row * hexHeight
+        };
+        
+        // 境界外チェック
+        if (center.x > this.width - 30 || center.y > this.height - 30) {
+          continue;
+        }
+        
+        // 六角形の頂点を生成（少しランダム性を加える）
+        const vertices = this.createHexagonVertices(center, hexRadius);
+        
+        cells.push({
+          id: `territory-${cellIndex}`,
+          center,
+          vertices,
+          neighbors: [] // 後で設定
+        });
+        
+        cellIndex++;
+        if (cellIndex >= targetCount) break;
+      }
+      if (cellIndex >= targetCount) break;
+    }
+    
+    // 隣接関係を計算
+    this.calculateNeighbors(cells);
+    
     return cells;
   }
 
-  private generateRandomPoints(): Position[] {
-    const points: Position[] = [];
-    const margin = 50;
-    const minDistance = 80; // 最小距離を保証
-
-    while (points.length < this.territoryCount) {
-      const x = margin + Math.random() * (this.width - 2 * margin);
-      const y = margin + Math.random() * (this.height - 2 * margin);
-      
-      // 既存の点から十分離れているか確認
-      const tooClose = points.some(p => 
-        Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < minDistance
-      );
-
-      if (!tooClose) {
-        points.push({ x, y });
-      }
+  private generateSkipPattern(total: number, target: number): boolean[] {
+    const pattern: boolean[] = new Array(total).fill(false);
+    const toSkip = total - target;
+    
+    if (toSkip <= 0) return pattern;
+    
+    // エッジ付近のセルを優先的にスキップ
+    const skipIndices: number[] = [];
+    const centerCol = Math.floor(Math.sqrt(total) / 2);
+    const centerRow = centerCol;
+    
+    for (let i = 0; i < total; i++) {
+      skipIndices.push(i);
     }
-
-    // Lloyd's relaxationを1回実行してより均等な配置に
-    return this.lloydRelaxation(points);
-  }
-
-  private lloydRelaxation(points: Position[]): Position[] {
-    const relaxed: Position[] = [];
     
-    points.forEach((point, index) => {
-      const neighbors = this.findNearestPoints(point, points, 6).filter(i => i !== index);
+    // 中心から遠い順にソート
+    skipIndices.sort((a, b) => {
+      const colA = a % Math.floor(Math.sqrt(total));
+      const rowA = Math.floor(a / Math.sqrt(total));
+      const colB = b % Math.floor(Math.sqrt(total));
+      const rowB = Math.floor(b / Math.sqrt(total));
       
-      // 重心を計算
-      let centerX = point.x;
-      let centerY = point.y;
-      let count = 1;
+      const distA = Math.abs(colA - centerCol) + Math.abs(rowA - centerRow);
+      const distB = Math.abs(colB - centerCol) + Math.abs(rowB - centerRow);
       
-      neighbors.forEach(n => {
-        centerX += points[n].x;
-        centerY += points[n].y;
-        count++;
-      });
-      
-      relaxed.push({
-        x: centerX / count,
-        y: centerY / count,
-      });
+      return distB - distA;
     });
-
-    return relaxed;
-  }
-
-  private findNeighbors(point: Position, points: Position[], index: number): number[] {
-    // Delaunay三角形分割の簡易版
-    // 最も近い点を隣接として扱う
-    const distances = points.map((p, i) => ({
-      index: i,
-      distance: i === index ? Infinity : Math.sqrt(Math.pow(p.x - point.x, 2) + Math.pow(p.y - point.y, 2))
-    }));
-
-    distances.sort((a, b) => a.distance - b.distance);
     
-    // 近い順に3-6個の隣接を選択
-    const neighborCount = 3 + Math.floor(Math.random() * 4);
-    return distances.slice(0, neighborCount).map(d => d.index);
+    // 遠い場所から順にスキップ
+    for (let i = 0; i < toSkip && i < skipIndices.length; i++) {
+      pattern[skipIndices[i]] = true;
+    }
+    
+    return pattern;
   }
 
-  private findNearestPoints(point: Position, points: Position[], count: number): number[] {
-    const distances = points.map((p, i) => ({
-      index: i,
-      distance: Math.sqrt(Math.pow(p.x - point.x, 2) + Math.pow(p.y - point.y, 2))
-    }));
-
-    distances.sort((a, b) => a.distance - b.distance);
-    return distances.slice(0, count).map(d => d.index);
-  }
-
-  private generateCellVertices(center: Position, points: Position[], index: number): Position[] {
-    // 簡易的な多角形生成
+  private createHexagonVertices(center: Position, radius: number): Position[] {
     const vertices: Position[] = [];
-    const angleStep = (Math.PI * 2) / 6;
-    const radius = 40 + Math.random() * 20;
-    const irregularity = 0.3;
-
+    const angleOffset = Math.PI / 6; // 30度回転させて平らな辺を上下にする
+    
     for (let i = 0; i < 6; i++) {
-      const angle = angleStep * i + (Math.random() - 0.5) * irregularity;
-      const r = radius * (1 + (Math.random() - 0.5) * irregularity);
+      const angle = (i * Math.PI / 3) + angleOffset;
+      // 少しランダム性を加える
+      const variation = 0.9 + Math.random() * 0.2;
+      const r = radius * variation;
       
       vertices.push({
         x: center.x + Math.cos(angle) * r,
-        y: center.y + Math.sin(angle) * r,
+        y: center.y + Math.sin(angle) * r
       });
     }
-
+    
     return vertices;
   }
 
-  // 実際のボロノイ領域を計算（より正確な実装）
-  computeVoronoiRegion(siteIndex: number, sites: Position[]): Position[] {
-    const site = sites[siteIndex];
-    const vertices: Position[] = [];
+  private calculateNeighbors(cells: VoronoiCell[]): void {
+    const maxDistance = 85; // 隣接とみなす最大距離
     
-    // 各隣接サイトとの垂直二等分線を計算
-    const neighbors = this.findNeighbors(site, sites, siteIndex);
-    
-    neighbors.forEach(neighborIndex => {
-      const neighbor = sites[neighborIndex];
+    for (let i = 0; i < cells.length; i++) {
+      const cell = cells[i];
+      const neighbors: string[] = [];
       
-      // 中点を計算
-      const midX = (site.x + neighbor.x) / 2;
-      const midY = (site.y + neighbor.y) / 2;
-      
-      // 垂直二等分線の方向
-      const dx = neighbor.y - site.y;
-      const dy = site.x - neighbor.x;
-      const length = Math.sqrt(dx * dx + dy * dy);
-      
-      if (length > 0) {
-        // 垂直二等分線上の点を追加
-        const normalX = dx / length;
-        const normalY = dy / length;
-        const offset = 100;
+      for (let j = 0; j < cells.length; j++) {
+        if (i === j) continue;
         
-        vertices.push({
-          x: midX + normalX * offset,
-          y: midY + normalY * offset,
-        });
-        vertices.push({
-          x: midX - normalX * offset,
-          y: midY - normalY * offset,
-        });
+        const other = cells[j];
+        const distance = Math.sqrt(
+          Math.pow(cell.center.x - other.center.x, 2) +
+          Math.pow(cell.center.y - other.center.y, 2)
+        );
+        
+        if (distance < maxDistance) {
+          neighbors.push(other.id);
+        }
       }
-    });
-
-    // 頂点を角度でソート
-    vertices.sort((a, b) => {
-      const angleA = Math.atan2(a.y - site.y, a.x - site.x);
-      const angleB = Math.atan2(b.y - site.y, b.x - site.x);
-      return angleA - angleB;
-    });
-
-    // 凸包を計算して返す
-    return this.computeConvexHull(vertices);
-  }
-
-  private computeConvexHull(points: Position[]): Position[] {
-    if (points.length < 3) return points;
-
-    // Graham's scan algorithm
-    const sorted = [...points].sort((a, b) => a.x - b.x || a.y - b.y);
+      
+      cell.neighbors = neighbors;
+    }
     
-    const cross = (o: Position, a: Position, b: Position) => {
-      return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
-    };
-
-    const lower: Position[] = [];
-    for (const p of sorted) {
-      while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 0) {
-        lower.pop();
+    // 孤立した領土を除去
+    for (let i = cells.length - 1; i >= 0; i--) {
+      if (cells[i].neighbors.length === 0) {
+        cells.splice(i, 1);
       }
-      lower.push(p);
     }
-
-    const upper: Position[] = [];
-    for (let i = sorted.length - 1; i >= 0; i--) {
-      const p = sorted[i];
-      while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 0) {
-        upper.pop();
+    
+    // インデックスを再計算
+    cells.forEach((cell, index) => {
+      cell.id = `territory-${index}`;
+    });
+    
+    // 隣接関係を再計算
+    for (const cell of cells) {
+      const newNeighbors: string[] = [];
+      for (const neighborId of cell.neighbors) {
+        const neighbor = cells.find(c => c.id === neighborId || 
+          neighborId.includes(c.id.split('-')[1]));
+        if (neighbor) {
+          newNeighbors.push(neighbor.id);
+        }
       }
-      upper.push(p);
+      cell.neighbors = newNeighbors;
     }
-
-    upper.pop();
-    lower.pop();
-    return lower.concat(upper);
   }
 }
