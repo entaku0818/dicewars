@@ -1,0 +1,75 @@
+.battle-effects {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.attack-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.energy-projectile {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #FFD700, #FF6B6B);
+  border-radius: 50%;
+  box-shadow: 
+    0 0 20px #FFD700,
+    0 0 40px #FF6B6B,
+    0 0 60px #FFD700;
+  animation: pulse-glow 0.5s ease-in-out infinite;
+}
+
+.impact-effect {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.8), transparent);
+  border-radius: 50%;
+  filter: blur(2px);
+}
+
+.battle-result-text {
+  position: absolute;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 20px currentColor;
+  white-space: nowrap;
+  z-index: 1001;
+}
+
+.battle-result-text.attacker {
+  color: #4CAF50;
+}
+
+.battle-result-text.defender {
+  color: #f44336;
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px #FFD700,
+      0 0 40px #FF6B6B,
+      0 0 60px #FFD700;
+  }
+  50% {
+    box-shadow: 
+      0 0 30px #FFD700,
+      0 0 60px #FF6B6B,
+      0 0 90px #FFD700;
+  }
+}

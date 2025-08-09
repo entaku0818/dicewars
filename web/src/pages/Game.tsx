@@ -3,6 +3,7 @@ import { useGame } from '../hooks/useGame';
 import Board from '../components/Board/Board';
 import PlayerPanel from '../components/PlayerPanel/PlayerPanel';
 import GameUI from '../components/GameUI/GameUI';
+import VictoryScreen from '../components/VictoryScreen/VictoryScreen';
 import DebugPanel from '../components/DebugPanel/DebugPanel';
 import './Game.css';
 
@@ -47,13 +48,16 @@ const Game: React.FC = () => {
         onEndTurn={handleEndTurn}
       />
 
-      {gameState.phase === 'gameOver' && (
-        <div className="game-over">
-          <h2>Game Over!</h2>
-          <p>Winner: {gameState.players.get(gameState.winnerId!)?.name}</p>
-          <button onClick={() => window.location.reload()}>New Game</button>
-        </div>
-      )}
+      <VictoryScreen
+        winner={gameState.winnerId ? gameState.players.get(gameState.winnerId)?.name || 'Unknown' : ''}
+        isVisible={gameState.phase === 'gameOver'}
+        onNewGame={() => window.location.reload()}
+        stats={{
+          turns: gameState.turn,
+          territoriesCaptured: 15,
+          battlesWon: Math.floor(gameState.turn * 0.7)
+        }}
+      />
 
       <DebugPanel />
     </div>

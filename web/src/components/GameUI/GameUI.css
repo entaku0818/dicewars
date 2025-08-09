@@ -18,21 +18,41 @@
 }
 
 .battle-result {
-  background: rgba(0, 0, 0, 0.7);
-  border: 2px solid #FFD700;
-  border-radius: 10px;
-  padding: 15px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(30, 30, 30, 0.9));
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  border-radius: 20px;
+  padding: 20px;
   color: white;
-  min-width: 300px;
-  animation: slideIn 0.3s ease;
+  min-width: 400px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.5),
+    inset 0 0 30px rgba(255, 215, 0, 0.1);
+}
+
+.battle-result::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #FFD700, #FF6B6B, #4ECDC4, #FFD700);
+  border-radius: 20px;
+  z-index: -1;
+  animation: gradient-rotate 3s linear infinite;
 }
 
 .battle-title {
   text-align: center;
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #FFD700;
+  font-size: 1.4rem;
+  font-weight: 900;
+  margin-bottom: 20px;
+  background: linear-gradient(45deg, #FFD700, #FFA500);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
 }
 
 .battle-rolls {
@@ -64,7 +84,22 @@
 
 .roll-label {
   font-weight: bold;
-  color: #ccc;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.attacker-label {
+  color: #4CAF50;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.defender-label {
+  color: #f44336;
+  text-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
 }
 
 .roll-dice {
@@ -96,20 +131,38 @@
 }
 
 .end-turn-button {
-  background: #FFD700;
+  background: linear-gradient(45deg, #FFD700, #FFA500);
   color: #333;
   border: none;
-  padding: 12px 30px;
-  font-size: 1.1rem;
+  padding: 15px 40px;
+  font-size: 1.2rem;
   font-weight: bold;
-  border-radius: 5px;
+  border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s;
+  box-shadow: 
+    0 10px 20px rgba(255, 215, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.turn-arrow {
+  font-size: 1.3rem;
+  transition: transform 0.3s;
 }
 
 .end-turn-button:hover:not(:disabled) {
-  background: #FFC700;
-  transform: scale(1.05);
+  box-shadow: 
+    0 15px 30px rgba(255, 215, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.end-turn-button:hover .turn-arrow {
+  transform: translateX(5px);
 }
 
 .end-turn-button:disabled {
@@ -140,6 +193,18 @@
 @keyframes pulse {
   0%, 100% { opacity: 0.7; }
   50% { opacity: 1; }
+}
+
+@keyframes gradient-rotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .help-text {
