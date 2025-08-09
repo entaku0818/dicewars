@@ -13,6 +13,7 @@ export interface Territory {
   diceCount: number;
   position: Position;
   adjacentTerritoryIds: string[];
+  vertices?: Position[]; // 多角形の頂点
 }
 
 export interface Player {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGame } from '../hooks/useGame';
-import Board from '../components/Board/Board';
+import MapBoard from '../components/MapBoard/MapBoard';
 import PlayerPanel from '../components/PlayerPanel/PlayerPanel';
 import GameUI from '../components/GameUI/GameUI';
 import VictoryScreen from '../components/VictoryScreen/VictoryScreen';
@@ -33,7 +33,7 @@ const Game: React.FC = () => {
         />
       </div>
 
-      <Board
+      <MapBoard
         territories={gameState.territories}
         players={gameState.players}
         currentPlayerId={gameState.currentPlayerId}

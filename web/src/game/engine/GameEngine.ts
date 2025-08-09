@@ -1,4 +1,5 @@
 import type { GameState, GameConfig, PlayerId, Territory, Player, BattleResult } from '../types';
+import { MapGenerator } from '../map/MapGenerator';
 
 export class GameEngine {
   private state: GameState;
@@ -25,28 +26,9 @@ export class GameEngine {
   }
 
   private generateMap(): Map<string, Territory> {
-    const territories = new Map<string, Territory>();
     const size = this.getMapSizeConfig();
-    
-    // シンプルなグリッドマップを生成
-    for (let row = 0; row < size.rows; row++) {
-      for (let col = 0; col < size.cols; col++) {
-        const id = `${row}-${col}`;
-        const territory: Territory = {
-          id,
-          ownerId: null,
-          diceCount: 0,
-          position: { 
-            x: col * 80 + 40, 
-            y: row * 80 + 40 
-          },
-          adjacentTerritoryIds: this.getAdjacentIds(row, col, size),
-        };
-        territories.set(id, territory);
-      }
-    }
-    
-    return territories;
+    const mapGenerator = new MapGenerator(800, 600, size.total);
+    return mapGenerator.generateMap();
   }
 
   private getMapSizeConfig() {
@@ -62,22 +44,6 @@ export class GameEngine {
     }
   }
 
-  private getAdjacentIds(row: number, col: number, size: { rows: number; cols: number }): string[] {
-    const adjacent: string[] = [];
-    const directions = [
-      [-1, 0], [1, 0], [0, -1], [0, 1], // 上下左右
-    ];
-
-    for (const [dr, dc] of directions) {
-      const newRow = row + dr;
-      const newCol = col + dc;
-      if (newRow >= 0 && newRow < size.rows && newCol >= 0 && newCol < size.cols) {
-        adjacent.push(`${newRow}-${newCol}`);
-      }
-    }
-
-    return adjacent;
-  }
 
   private createPlayers(): Map<PlayerId, Player> {
     const players = new Map<PlayerId, Player>();

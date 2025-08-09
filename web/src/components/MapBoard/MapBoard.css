@@ -1,0 +1,71 @@
+.map-board {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.4),
+    inset 0 0 100px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(135deg, #3a4f3a, #2a3f2a);
+}
+
+.map-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+}
+
+.background-pattern {
+  width: 100%;
+  height: 100%;
+}
+
+.board-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.connections {
+  animation: fadeIn 1s ease-out;
+}
+
+.territories {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.decorations {
+  pointer-events: none;
+  animation: fadeIn 2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* マップの縁の装飾 */
+.map-board::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 3px solid #4a5f4a;
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 2;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+}
