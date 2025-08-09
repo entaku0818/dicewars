@@ -1,0 +1,158 @@
+.game-ui {
+  max-width: 800px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.turn-info {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 10px 20px;
+  border-radius: 20px;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.battle-result {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #FFD700;
+  border-radius: 10px;
+  padding: 15px;
+  color: white;
+  min-width: 300px;
+  animation: slideIn 0.3s ease;
+}
+
+.battle-title {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #FFD700;
+}
+
+.battle-rolls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.roll-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.dice-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.roll-total {
+  margin-left: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #FFD700;
+}
+
+.roll-label {
+  font-weight: bold;
+  color: #ccc;
+}
+
+.roll-dice {
+  font-family: monospace;
+  font-size: 1.1rem;
+}
+
+.battle-winner {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+.battle-winner.attacker {
+  background: #4CAF50;
+  color: white;
+}
+
+.battle-winner.defender {
+  background: #f44336;
+  color: white;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.end-turn-button {
+  background: #FFD700;
+  color: #333;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.end-turn-button:hover:not(:disabled) {
+  background: #FFC700;
+  transform: scale(1.05);
+}
+
+.end-turn-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ai-thinking {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 10px 20px;
+  border-radius: 20px;
+  color: white;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.help-text {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #FFD700;
+  border-radius: 10px;
+  padding: 15px 25px;
+  color: white;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+.help-text p {
+  margin: 5px 0;
+}

@@ -1,0 +1,73 @@
+.debug-panel {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 500px;
+  max-height: 400px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid #FFD700;
+  border-radius: 8px 8px 0 0;
+  z-index: 9999;
+}
+
+.debug-panel.closed {
+  max-height: 40px;
+}
+
+.debug-toggle {
+  width: 100%;
+  padding: 10px;
+  background: #333;
+  color: #FFD700;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.debug-toggle:hover {
+  background: #444;
+}
+
+.debug-content {
+  padding: 10px;
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.clear-logs {
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.log-entries {
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: monospace;
+}
+
+.log-entry {
+  margin-bottom: 8px;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #FFD700;
+}
+
+.log-time {
+  color: #888;
+  font-size: 0.8rem;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.log-message {
+  color: #fff;
+  font-size: 0.85rem;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}

@@ -1,0 +1,15 @@
+.board {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  background: #2a2a2a;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.board-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}

@@ -1,0 +1,73 @@
+.player-panel {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.player-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 2px solid;
+  border-radius: 8px;
+  padding: 10px 15px;
+  min-width: 150px;
+  transition: all 0.3s;
+}
+
+.player-card.current {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.player-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.player-color-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.player-name {
+  color: white;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.current-indicator {
+  color: #FFD700;
+  margin-left: auto;
+  animation: blink 1s infinite;
+}
+
+.player-stats {
+  display: flex;
+  gap: 15px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.75rem;
+}
+
+.stat-value {
+  color: white;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
