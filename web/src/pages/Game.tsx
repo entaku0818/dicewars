@@ -38,7 +38,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
   }, [battleResult]);
 
   const isDoomActive = gameState.doomState?.isActive || false;
-  const isDoomWarning = gameState.doomState && gameState.doomState.turnsUntilDoom <= 5 && gameState.doomState.turnsUntilDoom > 0;
+  const isDoomWarning = gameState.doomState && gameState.doomState.turnsUntilDoom <= 2 && gameState.doomState.turnsUntilDoom > 0;
   const isDoomStarting = gameState.doomState?.turnsUntilDoom === 0 && !gameState.doomState?.isActive;
 
   return (
