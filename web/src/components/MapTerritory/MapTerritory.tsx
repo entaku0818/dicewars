@@ -20,7 +20,9 @@ const MapTerritory: React.FC<MapTerritoryProps> = ({
   isHighlighted = false,
   onClick,
 }) => {
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (isClickable || isSelected) {
       onClick();
     }

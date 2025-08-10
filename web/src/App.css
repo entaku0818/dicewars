@@ -4,6 +4,17 @@
   box-sizing: border-box;
 }
 
+body {
+  overflow-x: hidden;
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 #root {
   width: 100%;
   min-height: 100vh;
