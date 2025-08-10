@@ -78,23 +78,32 @@
 /* 破滅の時エフェクト */
 .doom-announcement {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 2000;
-  text-align: center;
+  pointer-events: all;
+  background: rgba(0, 0, 0, 0.3);
 }
 
 .doom-announcement h1 {
-  font-size: 4rem;
+  font-size: 5rem;
   color: #ff0000;
   text-shadow: 
-    0 0 20px rgba(255, 0, 0, 0.8),
-    0 0 40px rgba(255, 0, 0, 0.6),
-    0 0 60px rgba(255, 0, 0, 0.4);
+    0 0 30px rgba(255, 0, 0, 1),
+    0 0 60px rgba(255, 0, 0, 0.8),
+    0 0 90px rgba(255, 0, 0, 0.6),
+    0 0 120px rgba(255, 0, 0, 0.4);
   animation: doom-text-pulse 1s ease-in-out infinite;
   font-weight: 900;
   letter-spacing: 0.1em;
+  text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
 @keyframes doom-text-pulse {
@@ -116,29 +125,31 @@
   0% {
     background: radial-gradient(
       circle at center,
-      rgba(255, 0, 0, 0.8) 0%,
-      rgba(255, 0, 0, 0.5) 2%,
-      rgba(255, 0, 0, 0.2) 5%,
-      transparent 10%,
+      rgba(255, 0, 0, 1) 0%,
+      rgba(255, 0, 0, 0.9) 5%,
+      rgba(255, 0, 0, 0.6) 10%,
+      rgba(255, 0, 0, 0.3) 15%,
+      transparent 20%,
       transparent 100%
     );
   }
   50% {
     background: radial-gradient(
       circle at center,
-      rgba(255, 0, 0, 0.3) 0%,
-      rgba(255, 0, 0, 0.2) 20%,
-      rgba(255, 0, 0, 0.1) 40%,
-      rgba(139, 0, 0, 0.05) 60%,
-      transparent 80%
+      rgba(255, 0, 0, 0.6) 0%,
+      rgba(255, 0, 0, 0.5) 20%,
+      rgba(255, 0, 0, 0.4) 40%,
+      rgba(139, 0, 0, 0.3) 60%,
+      rgba(139, 0, 0, 0.2) 80%,
+      transparent 100%
     );
   }
   100% {
     background: radial-gradient(
       circle at center,
-      transparent 0%,
-      rgba(255, 0, 0, 0.15) 30%,
-      rgba(139, 0, 0, 0.25) 100%
+      rgba(255, 0, 0, 0.2) 0%,
+      rgba(255, 0, 0, 0.3) 30%,
+      rgba(139, 0, 0, 0.4) 100%
     );
   }
 }
