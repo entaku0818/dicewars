@@ -39,8 +39,6 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
       
       <DoomCounter 
         turn={gameState.turn}
-        doomState={gameState.doomState}
-        doomStartTurn={gameState.doomConfig?.startTurn || 20}
       />
       
       <div className="game-header">
@@ -53,8 +51,6 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
       <GameUI
         gameState={gameState}
         battleResult={battleResult}
-        isProcessing={isProcessing}
-        onEndTurn={handleEndTurn}
       />
 
       <MapBoard

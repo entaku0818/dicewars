@@ -2,21 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { GameState, BattleResult } from '../../game/types';
 import Dice3D from '../Dice3D/Dice3D';
-import { soundManager } from '../../game/sound/SoundManager';
 import './GameUI.css';
 
 interface GameUIProps {
   gameState: GameState;
   battleResult: BattleResult | null;
-  isProcessing: boolean;
-  onEndTurn: () => void;
 }
 
 const GameUI: React.FC<GameUIProps> = ({
   gameState,
   battleResult,
-  isProcessing,
-  onEndTurn,
 }) => {
   const currentPlayer = gameState.players.get(gameState.currentPlayerId);
   const isHumanTurn = currentPlayer && !currentPlayer.isAI;
@@ -111,36 +106,6 @@ const GameUI: React.FC<GameUIProps> = ({
         )}
       </AnimatePresence>
 
-      {isHumanTurn && (
-        <motion.div 
-          className="controls-container"
-          initial={{ y: 50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5 }}
-        >
-          {!battleResult && (
-            <div className="help-text-bottom">
-              <p>📍 <span style={{color: currentPlayer?.color, fontWeight: 'bold'}}>{currentPlayer?.name}</span>のターン</p>
-              <p>1️⃣ サイコロが2個以上ある自分の領土をクリック</p>
-              <p>2️⃣ 隣接する敵の領土をクリックして攻撃</p>
-            </div>
-          )}
-          <div className="controls">
-            <motion.button
-              className="end-turn-button"
-              onClick={onEndTurn}
-              disabled={isProcessing}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onMouseEnter={() => soundManager.play('hover', 0.2)}
-              onMouseDown={() => soundManager.play('click')}
-            >
-              <span>End Turn</span>
-              <span className="turn-arrow">→</span>
-            </motion.button>
-          </div>
-        </motion.div>
-      )}
 
       {!isHumanTurn && (
         <div className="ai-thinking">
