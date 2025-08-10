@@ -136,25 +136,23 @@ const MapBoard: React.FC<MapBoardProps> = ({
       </motion.svg>
       
       {/* マップ内の右下にUIを配置 */}
-      {isHumanTurn && onEndTurn && (
-        <div className="map-controls">
-          {!battleResult && (
-            <div className="map-help-text">
-              <p>📍 <span style={{color: currentPlayer?.color, fontWeight: 'bold'}}>{currentPlayer?.name}</span>のターン</p>
-              <p>1️⃣ サイコロ2個以上の領土を選択</p>
-              <p>2️⃣ 隣接する敵領土を攻撃</p>
-            </div>
-          )}
-          <button
-            className="map-end-turn-button"
-            onClick={onEndTurn}
-            disabled={isProcessing}
-          >
-            <span>END TURN</span>
-            <span className="turn-arrow">→</span>
-          </button>
-        </div>
-      )}
+      <div className="map-controls" style={{ visibility: isHumanTurn && onEndTurn ? 'visible' : 'hidden' }}>
+        {!battleResult && (
+          <div className="map-help-text">
+            <p>📍 <span style={{color: currentPlayer?.color, fontWeight: 'bold'}}>{currentPlayer?.name}</span>のターン</p>
+            <p>1️⃣ サイコロ2個以上の領土を選択</p>
+            <p>2️⃣ 隣接する敵領土を攻撃</p>
+          </div>
+        )}
+        <button
+          className="map-end-turn-button"
+          onClick={onEndTurn}
+          disabled={isProcessing}
+        >
+          <span>END TURN</span>
+          <span className="turn-arrow">→</span>
+        </button>
+      </div>
     </div>
   );
 };

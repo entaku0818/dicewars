@@ -1,7 +1,7 @@
 .game-container {
   min-height: 100vh;
   background: #ffffff;
-  padding: 10px 20px;
+  padding: 5px 20px;
   position: relative;
 }
 
@@ -9,10 +9,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto 10px;
+  margin: 0 auto 5px;
 }
 
 .game-title {
@@ -40,7 +39,7 @@
 
 .game-info {
   max-width: 900px;
-  margin: 10px auto;
+  margin: 5px auto;
 }
 
 .game-over {
