@@ -21,7 +21,11 @@
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.9), rgba(30, 30, 30, 0.9));
   border: 2px solid transparent;
   background-clip: padding-box;
-  position: relative;
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
   border-radius: 20px;
   padding: 20px;
   color: white;

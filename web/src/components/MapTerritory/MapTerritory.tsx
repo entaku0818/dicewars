@@ -161,20 +161,6 @@ const MapTerritory: React.FC<MapTerritoryProps> = ({
         </text>
       </g>
 
-      {/* プレイヤー名 */}
-      {owner && (
-        <text
-          x={territory.position.x}
-          y={territory.position.y - 32}
-          textAnchor="middle"
-          fontSize="9"
-          fill={owner.color}
-          fontWeight="bold"
-          opacity="0.8"
-        >
-          {owner.name}
-        </text>
-      )}
     </motion.g>
   );
 };
