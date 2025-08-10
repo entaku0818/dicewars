@@ -117,7 +117,7 @@ const MapBoard: React.FC<MapBoardProps> = ({
                 territory={territory}
                 owner={owner}
                 isSelected={isSelected}
-                isClickable={isClickable}
+                isClickable={!!isClickable}
                 isHighlighted={isHighlighted}
                 onClick={() => onTerritoryClick(territory.id)}
               />

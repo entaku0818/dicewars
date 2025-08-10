@@ -116,7 +116,6 @@ describe('GameEngine', () => {
 
   describe('attack', () => {
     it('should return null for invalid attack', () => {
-      const state = engine.getState();
       const result = engine.attack('invalid-1', 'invalid-2');
       expect(result).toBeNull();
     });

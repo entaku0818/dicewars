@@ -1,4 +1,4 @@
-import type { Territory, PowerUp, PowerUpType } from '../types';
+import type { Territory, PowerUp } from '../types';
 
 export class PowerUpManager {
   private static readonly POWER_UPS: PowerUp[] = [
@@ -77,38 +77,38 @@ export class PowerUpManager {
     return powerUp;
   }
 
-  static applyDoubleAttack(playerId: string, effects: any): void {
+  static applyDoubleAttack(playerId: string, effects: Record<string, any>): void {
     if (!effects[playerId]) {
       effects[playerId] = {};
     }
     effects[playerId].doubleAttack = true;
   }
 
-  static applyIronDefense(playerId: string, effects: any): void {
+  static applyIronDefense(playerId: string, effects: Record<string, any>): void {
     if (!effects[playerId]) {
       effects[playerId] = {};
     }
     effects[playerId].ironDefense = 2; // +2 dice bonus
   }
 
-  static applyTeleport(playerId: string, effects: any): void {
+  static applyTeleport(playerId: string, effects: Record<string, any>): void {
     if (!effects[playerId]) {
       effects[playerId] = {};
     }
     effects[playerId].teleportReady = true;
   }
 
-  static consumeDoubleAttack(playerId: string, effects: any): void {
+  static consumeDoubleAttack(playerId: string, effects: Record<string, any>): void {
     if (effects[playerId]?.doubleAttack) {
       effects[playerId].doubleAttack = false;
     }
   }
 
-  static getDefenseBonus(playerId: string, effects: any): number {
+  static getDefenseBonus(playerId: string, effects: Record<string, any>): number {
     return effects[playerId]?.ironDefense || 0;
   }
 
-  static clearTurnEffects(playerId: string, effects: any): void {
+  static clearTurnEffects(playerId: string, effects: Record<string, any>): void {
     if (effects[playerId]) {
       // Clear single-use effects
       effects[playerId].ironDefense = 0;

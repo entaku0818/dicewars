@@ -14,7 +14,7 @@ const Dice: React.FC<DiceProps> = ({
   size = 40,
   isRolling = false 
 }) => {
-  const dots = [];
+  const dots: React.ReactElement[] = [];
   const dotPositions: { [key: number]: number[][] } = {
     1: [[50, 50]],
     2: [[30, 30], [70, 70]],

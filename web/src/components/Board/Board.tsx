@@ -61,7 +61,7 @@ const Board: React.FC<BoardProps> = ({
               territory={territory}
               owner={owner}
               isSelected={isSelected}
-              isClickable={isClickable}
+              isClickable={!!isClickable}
               onClick={() => onTerritoryClick(territory.id)}
             />
           );
