@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { GameState, BattleResult } from '../../game/types';
 import Dice3D from '../Dice3D/Dice3D';
+import { soundManager } from '../../game/sound/SoundManager';
 import './GameUI.css';
 
 interface GameUIProps {
@@ -131,6 +132,8 @@ const GameUI: React.FC<GameUIProps> = ({
             disabled={isProcessing}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onMouseEnter={() => soundManager.play('hover', 0.2)}
+            onMouseDown={() => soundManager.play('click')}
           >
             <span>End Turn</span>
             <span className="turn-arrow">→</span>

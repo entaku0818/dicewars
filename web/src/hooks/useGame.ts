@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { GameEngine } from '../game/engine/GameEngine';
 import type { GameState, GameConfig, BattleResult } from '../game/types';
+import { soundManager } from '../game/sound/SoundManager';
 
 export const useGame = (config: GameConfig) => {
   const [engine] = useState(() => new GameEngine(config));
@@ -28,8 +29,11 @@ export const useGame = (config: GameConfig) => {
     if (territory.ownerId === gameState.currentPlayerId) {
       if (territory.diceCount > 1) {
         console.log('Selecting territory:', territoryId);
+        soundManager.play('click');
         setSelectedTerritoryId(territoryId);
         setBattleResult(null);
+      } else {
+        soundManager.play('invalid_action');
       }
     } 
     // 選択中の領土から攻撃可能な敵領土をクリックした場合
@@ -38,10 +42,24 @@ export const useGame = (config: GameConfig) => {
       console.log('Can attack?', canAttack);
       if (canAttack) {
         setIsProcessing(true);
+        soundManager.play('battle_start');
+        soundManager.play('dice_roll');
         
         const result = engine.attack(selectedTerritoryId, territoryId);
         if (result) {
           setBattleResult(result);
+          
+          // バトル結果の音を遅延再生
+          setTimeout(() => {
+            soundManager.play('dice_settle');
+            if (result.winner === 'attacker') {
+              soundManager.play('battle_win');
+              soundManager.play('territory_capture');
+            } else {
+              soundManager.play('battle_lose');
+            }
+          }, 500);
+          
           updateGameState();
           
           // 勝利した場合は選択を維持、負けた場合は解除
@@ -51,6 +69,8 @@ export const useGame = (config: GameConfig) => {
         }
         
         setIsProcessing(false);
+      } else {
+        soundManager.play('invalid_action');
       }
     }
   }, [selectedTerritoryId, gameState, engine, updateGameState, isProcessing]);
@@ -59,10 +79,16 @@ export const useGame = (config: GameConfig) => {
     if (isProcessing) return;
     
     setIsProcessing(true);
+    soundManager.play('turn_end');
     engine.endTurn();
     updateGameState();
     setSelectedTerritoryId(null);
     setBattleResult(null);
+    
+    // 次のターンの開始音
+    setTimeout(() => {
+      soundManager.play('turn_start');
+    }, 300);
     
     // Show turn transition for local multiplayer
     const nextPlayer = engine.getState().players.get(engine.getState().currentPlayerId);

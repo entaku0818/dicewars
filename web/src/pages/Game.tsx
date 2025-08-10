@@ -6,6 +6,7 @@ import GameUI from '../components/GameUI/GameUI';
 import VictoryScreen from '../components/VictoryScreen/VictoryScreen';
 import TurnTransition from '../components/TurnTransition/TurnTransition';
 import DebugPanel from '../components/DebugPanel/DebugPanel';
+import SoundControl from '../components/SoundControl/SoundControl';
 import type { GameConfig } from '../game/types';
 import './Game.css';
 
@@ -28,6 +29,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
 
   return (
     <div className="game-container">
+      <SoundControl />
       <div className="game-header">
         <h1 className="game-title">DICEWARS</h1>
         <button className="back-to-title" onClick={onBackToTitle}>

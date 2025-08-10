@@ -1,5 +1,6 @@
 import type { GameState, GameConfig, PlayerId, Territory, Player, BattleResult } from '../types';
 import { MapGenerator } from '../map/MapGenerator';
+import { soundManager } from '../sound/SoundManager';
 
 export class GameEngine {
   private state: GameState;
@@ -193,6 +194,11 @@ export class GameEngine {
         Math.floor(Math.random() * availableTerritories.length)
       ];
       randomTerritory.diceCount = Math.min(8, randomTerritory.diceCount + 1);
+      soundManager.play('reinforce_dice');
+    }
+    
+    if (reinforcements > 0) {
+      setTimeout(() => soundManager.play('reinforce_complete'), 200);
     }
   }
 
@@ -208,6 +214,15 @@ export class GameEngine {
     if (ownerSet.size === 1) {
       this.state.winnerId = Array.from(ownerSet)[0];
       this.state.phase = 'gameOver';
+      soundManager.play('game_over');
+    }
+    
+    // プレイヤー脱落チェック
+    for (const player of this.state.players.values()) {
+      if (player.isActive && this.getTerritoryCount(player.id) === 0) {
+        player.isActive = false;
+        soundManager.play('player_eliminated');
+      }
     }
   }
 

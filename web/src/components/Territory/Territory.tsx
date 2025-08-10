@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Territory as TerritoryType, Player } from '../../game/types';
+import { soundManager } from '../../game/sound/SoundManager';
 import './Territory.css';
 
 interface TerritoryProps {
@@ -27,6 +28,7 @@ const Territory: React.FC<TerritoryProps> = ({
     <g
       className={`territory ${isClickable ? 'clickable' : ''} ${isSelected ? 'selected' : ''}`}
       onClick={handleClick}
+      onMouseEnter={() => isClickable && soundManager.play('hover', 0.2)}
     >
       {/* 領土の円 */}
       <circle
