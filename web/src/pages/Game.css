@@ -205,10 +205,10 @@
   top: 50%;
   transform: translateY(-50%);
   border-radius: 20px;
-  padding: 20px;
+  padding: 25px;
   color: white;
-  min-width: 350px;
-  max-width: 400px;
+  min-width: 380px;
+  max-width: 450px;
   z-index: 1000;
   box-shadow: 
     0 30px 60px rgba(0, 0, 0, 0.8),
@@ -249,14 +249,15 @@
 .roll-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 12px;
+  margin-bottom: 15px;
 }
 
 .dice-container {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
+  padding-left: 10px;
 }
 
 .roll-total {
@@ -268,7 +269,7 @@
 
 .roll-label {
   font-weight: bold;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   display: inline-flex;
