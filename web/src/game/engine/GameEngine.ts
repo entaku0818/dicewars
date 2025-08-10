@@ -201,10 +201,24 @@ export class GameEngine {
     
     if (playerTerritories.length === 0) return;
     
-    // 連続した領土数に応じてサイコロを追加（簡易版）
-    const reinforcements = Math.max(3, Math.floor(playerTerritories.length / 3));
+    // 最大連続領土群を計算
+    const largestConnectedGroup = this.getLargestConnectedGroup(this.state.currentPlayerId);
     
-    for (let i = 0; i < reinforcements; i++) {
+    // 基本サイコロ: 領土数 ÷ 3（最小3個）
+    const baseReinforcements = Math.max(3, Math.floor(playerTerritories.length / 3));
+    
+    // 連続領土ボーナス: 最大連続領土群のサイズに応じて追加
+    let connectedBonus = 0;
+    if (largestConnectedGroup >= 5) {
+      connectedBonus = Math.floor(largestConnectedGroup / 4); // 5個以上繋がってたらボーナス
+    }
+    
+    const totalReinforcements = baseReinforcements + connectedBonus;
+    
+    // コンソールログでデバッグ情報を表示
+    console.log(`増援: 基本${baseReinforcements}個 + 連続ボーナス${connectedBonus}個 (最大連続${largestConnectedGroup}領土)`);
+    
+    for (let i = 0; i < totalReinforcements; i++) {
       const availableTerritories = playerTerritories.filter(t => t.diceCount < 8);
       if (availableTerritories.length === 0) break;
       
@@ -215,9 +229,46 @@ export class GameEngine {
       soundManager.play('reinforce_dice');
     }
     
-    if (reinforcements > 0) {
+    if (totalReinforcements > 0) {
       setTimeout(() => soundManager.play('reinforce_complete'), 200);
     }
+  }
+
+  private getLargestConnectedGroup(playerId: PlayerId): number {
+    const playerTerritories = Array.from(this.state.territories.values())
+      .filter(t => t.ownerId === playerId);
+    
+    if (playerTerritories.length === 0) return 0;
+    
+    const visited = new Set<string>();
+    let largestGroup = 0;
+    
+    // 各領土から深さ優先探索で連続領土をカウント
+    for (const territory of playerTerritories) {
+      if (!visited.has(territory.id)) {
+        const groupSize = this.countConnectedTerritories(territory.id, playerId, visited);
+        largestGroup = Math.max(largestGroup, groupSize);
+      }
+    }
+    
+    return largestGroup;
+  }
+
+  private countConnectedTerritories(territoryId: string, playerId: PlayerId, visited: Set<string>): number {
+    const territory = this.state.territories.get(territoryId);
+    if (!territory || territory.ownerId !== playerId || visited.has(territoryId)) {
+      return 0;
+    }
+    
+    visited.add(territoryId);
+    let count = 1;
+    
+    // 隣接する領土を再帰的にチェック
+    for (const adjacentId of territory.adjacentTerritoryIds) {
+      count += this.countConnectedTerritories(adjacentId, playerId, visited);
+    }
+    
+    return count;
   }
 
   private checkWinCondition(): void {
