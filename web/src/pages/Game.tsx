@@ -75,7 +75,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.05 }}
             >
-              ⚔️ Battle Result ⚔️
+              ⚔️ バトル結果 ⚔️
             </motion.div>
             <div className="battle-rolls">
               <motion.div 
@@ -84,7 +84,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.1 }}
               >
-                <span className="roll-label attacker-label">⚔️ Attacker</span>
+                <span className="roll-label attacker-label">⚔️ 攻撃</span>
                 <div className="dice-container">
                   {battleResult.attacker.rolls.map((roll, i) => (
                     <Dice3D key={i} value={roll} color="#4CAF50" size={50} isRolling={isRolling} />
@@ -105,7 +105,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.15 }}
               >
-                <span className="roll-label defender-label">🛡️ Defender</span>
+                <span className="roll-label defender-label">🛡️ 防御</span>
                 <div className="dice-container">
                   {battleResult.defender.rolls.map((roll, i) => (
                     <Dice3D key={i} value={roll} color="#f44336" size={50} isRolling={isRolling} />
@@ -128,8 +128,8 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
               transition={{ delay: 0.5, type: "spring", stiffness: 300 }}
             >
               {battleResult.winner === 'attacker' ? 
-                '⚔️ ATTACKER WINS! ⚔️' : 
-                '🛡️ DEFENDER HOLDS! 🛡️'
+                '⚔️ 攻撃成功！ ⚔️' : 
+                '🛡️ 防御成功！ 🛡️'
               }
             </motion.div>
           </motion.div>
