@@ -133,18 +133,6 @@ const MapBoard: React.FC<MapBoardProps> = ({
           })}
         </g>
 
-        {/* 装飾要素 */}
-        <g className="decorations">
-          {/* コンパスローズ */}
-          <g transform="translate(750, 550)">
-            <circle r="30" fill="none" stroke="#666" strokeWidth="2" opacity="0.5"/>
-            <text x="0" y="-35" textAnchor="middle" fill="#666" fontSize="12">N</text>
-            <text x="35" y="5" textAnchor="middle" fill="#666" fontSize="12">E</text>
-            <text x="0" y="40" textAnchor="middle" fill="#666" fontSize="12">S</text>
-            <text x="-35" y="5" textAnchor="middle" fill="#666" fontSize="12">W</text>
-            <path d="M 0,-25 L 5,-5 L 0,-10 L -5,-5 Z" fill="#666" opacity="0.7"/>
-          </g>
-        </g>
       </motion.svg>
       
       {/* マップ内の右下にUIを配置 */}
