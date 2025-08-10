@@ -29,12 +29,13 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
 
   const isDoomActive = gameState.doomState?.isActive || false;
   const isDoomWarning = gameState.doomState && gameState.doomState.turnsUntilDoom <= 5 && gameState.doomState.turnsUntilDoom > 0;
+  const isDoomStarting = gameState.doomState?.turnsUntilDoom === 0 && !gameState.doomState?.isActive;
 
   return (
     <div className={`game-container ${isDoomActive ? 'doom-active' : ''} ${isDoomWarning ? 'doom-warning' : ''}`}>
       {/* 破滅の時背景エフェクト */}
       {(isDoomActive || isDoomWarning) && (
-        <div className="doom-background-effect" />
+        <div className={`doom-background-effect ${isDoomStarting ? 'doom-starting' : ''}`} />
       )}
       
       <DoomCounter 
