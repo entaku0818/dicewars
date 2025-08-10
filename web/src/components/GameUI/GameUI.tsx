@@ -25,11 +25,7 @@ const GameUI: React.FC<GameUIProps> = ({
   }, [battleResult]);
 
   return (
-    <div className="game-ui">
-      <div className="turn-info">
-        <span>Turn {gameState.turn}</span>
-      </div>
-
+    <>
       <AnimatePresence>
         {battleResult && (
           <motion.div 
@@ -112,7 +108,7 @@ const GameUI: React.FC<GameUIProps> = ({
           <span>AI is thinking...</span>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
