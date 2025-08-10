@@ -4,6 +4,7 @@ import MapBoard from '../components/MapBoard/MapBoard';
 import PlayerPanel from '../components/PlayerPanel/PlayerPanel';
 import GameUI from '../components/GameUI/GameUI';
 import VictoryScreen from '../components/VictoryScreen/VictoryScreen';
+import TurnTransition from '../components/TurnTransition/TurnTransition';
 import DebugPanel from '../components/DebugPanel/DebugPanel';
 import type { GameConfig } from '../game/types';
 import './Game.css';
@@ -19,8 +20,10 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
     selectedTerritoryId,
     battleResult,
     isProcessing,
+    showTurnTransition,
     handleTerritoryClick,
     handleEndTurn,
+    handleTurnTransitionComplete,
   } = useGame(config);
 
   return (
@@ -64,6 +67,12 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
           territoriesCaptured: 15,
           battlesWon: Math.floor(gameState.turn * 0.7)
         }}
+      />
+
+      <TurnTransition
+        player={gameState.players.get(gameState.currentPlayerId)}
+        isVisible={showTurnTransition}
+        onComplete={handleTurnTransitionComplete}
       />
 
       <DebugPanel />

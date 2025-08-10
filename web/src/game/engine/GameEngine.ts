@@ -53,9 +53,9 @@ export class GameEngine {
       const id = `player-${i}`;
       const player: Player = {
         id,
-        name: i === 0 ? 'You' : `AI ${i}`,
+        name: this.config.isLocalMultiplayer ? `Player ${i + 1}` : (i === 0 ? 'You' : `AI ${i}`),
         color: colors[i],
-        isAI: i !== 0,
+        isAI: this.config.isLocalMultiplayer ? false : (i !== 0),
         isActive: true,
       };
       players.set(id, player);

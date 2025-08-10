@@ -36,7 +36,7 @@ const GameUI: React.FC<GameUIProps> = ({
 
       {isHumanTurn && !battleResult && (
         <div className="help-text">
-          <p>📍 あなたは<span style={{color: '#FF6B6B', fontWeight: 'bold'}}>赤色</span>のプレイヤーです</p>
+          <p>📍 <span style={{color: currentPlayer?.color, fontWeight: 'bold'}}>{currentPlayer?.name}</span>のターン</p>
           <p>1️⃣ サイコロが2個以上ある自分の領土をクリック</p>
           <p>2️⃣ 隣接する敵の領土をクリックして攻撃</p>
         </div>

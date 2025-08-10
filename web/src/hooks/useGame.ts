@@ -8,6 +8,7 @@ export const useGame = (config: GameConfig) => {
   const [selectedTerritoryId, setSelectedTerritoryId] = useState<string | null>(null);
   const [battleResult, setBattleResult] = useState<BattleResult | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showTurnTransition, setShowTurnTransition] = useState(false);
 
   const updateGameState = useCallback(() => {
     setGameState({ ...engine.getState() });
@@ -62,8 +63,15 @@ export const useGame = (config: GameConfig) => {
     updateGameState();
     setSelectedTerritoryId(null);
     setBattleResult(null);
+    
+    // Show turn transition for local multiplayer
+    const nextPlayer = engine.getState().players.get(engine.getState().currentPlayerId);
+    if (config.isLocalMultiplayer && nextPlayer && !nextPlayer.isAI) {
+      setShowTurnTransition(true);
+    }
+    
     setIsProcessing(false);
-  }, [engine, updateGameState, isProcessing]);
+  }, [engine, updateGameState, isProcessing, config.isLocalMultiplayer]);
 
   // AI の自動プレイ
   useEffect(() => {
@@ -108,12 +116,18 @@ export const useGame = (config: GameConfig) => {
     return () => clearTimeout(timer);
   }, [gameState.currentPlayerId, gameState.players, gameState.territories, gameState.phase, engine, updateGameState]);
 
+  const handleTurnTransitionComplete = useCallback(() => {
+    setShowTurnTransition(false);
+  }, []);
+
   return {
     gameState,
     selectedTerritoryId,
     battleResult,
     isProcessing,
+    showTurnTransition,
     handleTerritoryClick,
     handleEndTurn,
+    handleTurnTransitionComplete,
   };
 };

@@ -72,4 +72,5 @@ export interface GameConfig {
   playerCount: number;
   mapSize: 'small' | 'medium' | 'large';
   aiDifficulty: 'easy' | 'normal' | 'hard';
+  isLocalMultiplayer?: boolean;
 }

@@ -9,6 +9,7 @@ interface TitleProps {
 
 const Title: React.FC<TitleProps> = ({ onStartGame }) => {
   const [showMenu, setShowMenu] = useState(false);
+  const [gameMode, setGameMode] = useState<'single' | 'local' | null>(null);
   const [config, setConfig] = useState<GameConfig>({
     playerCount: 4,
     mapSize: 'small',
@@ -16,7 +17,10 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
   });
 
   const handleStart = () => {
-    onStartGame(config);
+    onStartGame({
+      ...config,
+      isLocalMultiplayer: gameMode === 'local'
+    });
   };
 
   return (
@@ -35,18 +39,43 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
         
         <p className="subtitle">Conquer the world with dice!</p>
 
-        {!showMenu ? (
-          <motion.button
-            className="start-button"
-            onClick={() => setShowMenu(true)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+        {!showMenu && !gameMode ? (
+          <motion.div
+            className="mode-selection"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            START GAME
-          </motion.button>
+            <h2>Select Game Mode</h2>
+            <div className="mode-buttons">
+              <motion.button
+                className="mode-button"
+                onClick={() => {
+                  setGameMode('single');
+                  setShowMenu(true);
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="mode-icon">🤖</span>
+                <span className="mode-title">Single Player</span>
+                <span className="mode-desc">Play against AI</span>
+              </motion.button>
+              <motion.button
+                className="mode-button"
+                onClick={() => {
+                  setGameMode('local');
+                  setShowMenu(true);
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="mode-icon">👥</span>
+                <span className="mode-title">Local Multiplayer</span>
+                <span className="mode-desc">Pass & Play with friends</span>
+              </motion.button>
+            </div>
+          </motion.div>
         ) : (
           <motion.div 
             className="game-menu"
@@ -84,20 +113,29 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
               </div>
             </div>
 
-            <div className="menu-section">
-              <h3>AI Difficulty</h3>
-              <div className="button-group">
-                {(['easy', 'normal', 'hard'] as const).map(difficulty => (
-                  <button
-                    key={difficulty}
-                    className={`option-button ${config.aiDifficulty === difficulty ? 'active' : ''}`}
-                    onClick={() => setConfig({ ...config, aiDifficulty: difficulty })}
-                  >
-                    {difficulty.toUpperCase()}
-                  </button>
-                ))}
+            {gameMode === 'single' && (
+              <div className="menu-section">
+                <h3>AI Difficulty</h3>
+                <div className="button-group">
+                  {(['easy', 'normal', 'hard'] as const).map(difficulty => (
+                    <button
+                      key={difficulty}
+                      className={`option-button ${config.aiDifficulty === difficulty ? 'active' : ''}`}
+                      onClick={() => setConfig({ ...config, aiDifficulty: difficulty })}
+                    >
+                      {difficulty.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {gameMode === 'local' && (
+              <div className="menu-section">
+                <h3>Game Settings</h3>
+                <p className="mode-info">🎮 Players will take turns on the same device</p>
+              </div>
+            )}
 
             <div className="menu-actions">
               <motion.button
@@ -110,7 +148,10 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
               </motion.button>
               <button
                 className="back-button"
-                onClick={() => setShowMenu(false)}
+                onClick={() => {
+                  setShowMenu(false);
+                  setGameMode(null);
+                }}
               >
                 BACK
               </button>
