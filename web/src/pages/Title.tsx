@@ -99,6 +99,21 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
             </div>
 
             <div className="menu-section">
+              <h3>破滅の時（ターン）</h3>
+              <div className="button-group">
+                {[15, 20, 25, 30, 99].map(turn => (
+                  <button
+                    key={turn}
+                    className={`option-button ${(config.doomStartTurn || 20) === turn ? 'active' : ''}`}
+                    onClick={() => setConfig({ ...config, doomStartTurn: turn })}
+                  >
+                    {turn === 99 ? 'なし' : turn}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="menu-section">
               <h3>マップサイズ</h3>
               <div className="button-group">
                 {(['small', 'medium', 'large'] as const).map(size => (

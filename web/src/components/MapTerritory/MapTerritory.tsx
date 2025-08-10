@@ -62,10 +62,10 @@ const MapTerritory: React.FC<MapTerritoryProps> = ({
       {/* メインの六角形 */}
       <polygon
         points={territory.vertices?.map(v => `${v.x},${v.y}`).join(' ') || ''}
-        fill={owner?.color || '#556B2F'}
-        stroke={isSelected ? '#FFD700' : (isHighlighted ? '#FF6B6B' : owner?.color || '#2a4a3a')}
+        fill={owner?.color || '#FFFFFF'}
+        stroke={isSelected ? '#FFD700' : (isHighlighted ? '#FF6B6B' : owner?.color || '#999999')}
         strokeWidth={isSelected ? '4' : (isHighlighted ? '3' : '2')}
-        opacity={owner ? 0.85 : 0.6}
+        opacity={owner ? 0.85 : 0.9}
         strokeLinejoin="round"
         filter={`url(#shadow-${territory.id})`}
         style={{ 

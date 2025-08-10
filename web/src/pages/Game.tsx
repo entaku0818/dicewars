@@ -48,6 +48,25 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
         <div className={`doom-background-effect ${isDoomStarting ? 'doom-starting' : ''}`} />
       )}
       
+      {/* 破滅開始アナウンス */}
+      {isDoomStarting && (
+        <motion.div 
+          className="doom-announcement"
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0, opacity: 0 }}
+          transition={{ duration: 0.5, type: "spring" }}
+        >
+          <motion.h1
+            initial={{ y: -50 }}
+            animate={{ y: 0 }}
+            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+          >
+            破滅の時が始まる！！！
+          </motion.h1>
+        </motion.div>
+      )}
+      
       <DoomCounter 
         turn={gameState.turn}
       />

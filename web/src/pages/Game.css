@@ -76,26 +76,69 @@
 }
 
 /* 破滅の時エフェクト */
+.doom-announcement {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
+  text-align: center;
+}
+
+.doom-announcement h1 {
+  font-size: 4rem;
+  color: #ff0000;
+  text-shadow: 
+    0 0 20px rgba(255, 0, 0, 0.8),
+    0 0 40px rgba(255, 0, 0, 0.6),
+    0 0 60px rgba(255, 0, 0, 0.4);
+  animation: doom-text-pulse 1s ease-in-out infinite;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+}
+
+@keyframes doom-text-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
 .doom-background-effect.doom-starting {
-  animation: doom-expand 1s ease-out forwards;
+  animation: doom-expand 2s ease-out forwards;
 }
 
 @keyframes doom-expand {
   0% {
     background: radial-gradient(
       circle at center,
-      rgba(255, 0, 0, 0.5) 0%,
-      rgba(255, 0, 0, 0.3) 5%,
+      rgba(255, 0, 0, 0.8) 0%,
+      rgba(255, 0, 0, 0.5) 2%,
+      rgba(255, 0, 0, 0.2) 5%,
       transparent 10%,
       transparent 100%
+    );
+  }
+  50% {
+    background: radial-gradient(
+      circle at center,
+      rgba(255, 0, 0, 0.3) 0%,
+      rgba(255, 0, 0, 0.2) 20%,
+      rgba(255, 0, 0, 0.1) 40%,
+      rgba(139, 0, 0, 0.05) 60%,
+      transparent 80%
     );
   }
   100% {
     background: radial-gradient(
       circle at center,
       transparent 0%,
-      rgba(255, 0, 0, 0.1) 40%,
-      rgba(139, 0, 0, 0.2) 100%
+      rgba(255, 0, 0, 0.15) 30%,
+      rgba(139, 0, 0, 0.25) 100%
     );
   }
 }

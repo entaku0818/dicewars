@@ -76,6 +76,7 @@ export interface GameConfig {
   aiDifficulty: 'easy' | 'normal' | 'hard';
   isLocalMultiplayer?: boolean;
   doomEnabled?: boolean;
+  doomStartTurn?: number;
 }
 
 export interface DoomConfig {

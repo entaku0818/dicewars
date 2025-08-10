@@ -18,8 +18,8 @@ export class GameEngine {
 
     // 破滅の時設定（デフォルト20ターン後）
     const doomConfig = {
-      enabled: this.config.doomEnabled !== false, // デフォルトで有効
-      startTurn: 20,
+      enabled: this.config.doomStartTurn !== 99, // 99の場合は無効
+      startTurn: this.config.doomStartTurn || 20,
       level: 1 as const, // レベル1: 領土崩壊
     };
 
