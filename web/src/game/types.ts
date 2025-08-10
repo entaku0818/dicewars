@@ -75,6 +75,7 @@ export interface GameConfig {
   mapSize: 'small' | 'medium' | 'large';
   aiDifficulty: 'easy' | 'normal' | 'hard';
   isLocalMultiplayer?: boolean;
+  isMultiplayer?: boolean;
   doomEnabled?: boolean;
   doomStartTurn?: number;
 }

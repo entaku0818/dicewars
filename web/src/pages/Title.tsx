@@ -5,11 +5,12 @@ import './Title.css';
 
 interface TitleProps {
   onStartGame: (config: GameConfig) => void;
+  onStartOnline: (mode: 'create' | 'join') => void;
 }
 
-const Title: React.FC<TitleProps> = ({ onStartGame }) => {
+const Title: React.FC<TitleProps> = ({ onStartGame, onStartOnline }) => {
   const [showMenu, setShowMenu] = useState(false);
-  const [gameMode, setGameMode] = useState<'single' | 'local' | null>(null);
+  const [gameMode, setGameMode] = useState<'single' | 'local' | 'online' | null>(null);
   const [config, setConfig] = useState<GameConfig>({
     playerCount: 4,
     mapSize: 'small',
@@ -74,7 +75,56 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
                 <span className="mode-title">みんなで遊ぶ</span>
                 <span className="mode-desc">同じ端末で交代でプレイ</span>
               </motion.button>
+              <motion.button
+                className="mode-button"
+                onClick={() => {
+                  setGameMode('online');
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="mode-icon">🌐</span>
+                <span className="mode-title">オンライン対戦</span>
+                <span className="mode-desc">ルームコードで友達と対戦</span>
+              </motion.button>
             </div>
+          </motion.div>
+        ) : gameMode === 'online' ? (
+          <motion.div
+            className="mode-selection"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            <h2>オンライン対戦</h2>
+            <div className="mode-buttons">
+              <motion.button
+                className="mode-button"
+                onClick={() => onStartOnline('create')}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="mode-icon">🏠</span>
+                <span className="mode-title">ルームを作成</span>
+                <span className="mode-desc">友達を招待する</span>
+              </motion.button>
+              <motion.button
+                className="mode-button"
+                onClick={() => onStartOnline('join')}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="mode-icon">🔑</span>
+                <span className="mode-title">ルームに参加</span>
+                <span className="mode-desc">コードを入力して参加</span>
+              </motion.button>
+            </div>
+            <button
+              className="back-button"
+              onClick={() => setGameMode(null)}
+              style={{ marginTop: '20px' }}
+            >
+              戻る
+            </button>
           </motion.div>
         ) : (
           <motion.div 

@@ -1,31 +1,51 @@
 import { useState } from 'react';
 import Game from './pages/Game';
 import Title from './pages/Title';
+import Lobby from './pages/Lobby';
 import type { GameConfig } from './game/types';
 import './App.css';
 
+type AppState = 'title' | 'game' | 'lobby';
+
 function App() {
-  const [gameStarted, setGameStarted] = useState(false);
+  const [appState, setAppState] = useState<AppState>('title');
   const [gameConfig, setGameConfig] = useState<GameConfig>({
     playerCount: 4,
     mapSize: 'small',
     aiDifficulty: 'normal',
   });
+  const [lobbyMode, setLobbyMode] = useState<'create' | 'join'>('create');
 
   const handleStartGame = (config: GameConfig) => {
     setGameConfig(config);
-    setGameStarted(true);
+    setAppState('game');
+  };
+
+  const handleStartOnline = (mode: 'create' | 'join') => {
+    setLobbyMode(mode);
+    setAppState('lobby');
   };
 
   const handleBackToTitle = () => {
-    setGameStarted(false);
+    setAppState('title');
   };
 
-  if (gameStarted) {
+  if (appState === 'game') {
     return <Game config={gameConfig} onBackToTitle={handleBackToTitle} />;
   }
 
-  return <Title onStartGame={handleStartGame} />;
+  if (appState === 'lobby') {
+    return (
+      <Lobby
+        mode={lobbyMode}
+        config={gameConfig}
+        onGameStart={handleStartGame}
+        onBack={handleBackToTitle}
+      />
+    );
+  }
+
+  return <Title onStartGame={handleStartGame} onStartOnline={handleStartOnline} />;
 }
 
 export default App;
