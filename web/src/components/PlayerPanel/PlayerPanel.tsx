@@ -45,12 +45,12 @@ const PlayerPanel: React.FC<PlayerPanelProps> = ({
             </div>
             <div className="player-stats">
               <div className="stat">
-                <span className="stat-label">Territories:</span>
                 <span className="stat-value">{stats.territoryCount}</span>
+                <span className="stat-label">領土</span>
               </div>
               <div className="stat">
-                <span className="stat-label">Dice:</span>
                 <span className="stat-value">{stats.diceCount}</span>
+                <span className="stat-label">ダイス</span>
               </div>
             </div>
           </div>
