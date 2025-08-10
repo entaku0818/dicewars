@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { GameState, BattleResult } from '../../game/types';
+import type { BattleResult } from '../../game/types';
 import Dice3D from '../Dice3D/Dice3D';
 import './GameUI.css';
 
 interface GameUIProps {
-  gameState: GameState;
   battleResult: BattleResult | null;
 }
 
 const GameUI: React.FC<GameUIProps> = ({
-  gameState,
   battleResult,
 }) => {
-  const currentPlayer = gameState.players.get(gameState.currentPlayerId);
-  const isHumanTurn = currentPlayer && !currentPlayer.isAI;
   const [isRolling, setIsRolling] = useState(false);
 
   useEffect(() => {
@@ -101,13 +97,6 @@ const GameUI: React.FC<GameUIProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-
-
-      {!isHumanTurn && (
-        <div className="ai-thinking">
-          <span>AI is thinking...</span>
-        </div>
-      )}
     </>
   );
 };

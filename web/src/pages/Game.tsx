@@ -50,7 +50,6 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
       </div>
 
       <GameUI
-        gameState={gameState}
         battleResult={battleResult}
       />
 
