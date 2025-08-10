@@ -77,7 +77,7 @@
 
 /* 破滅の時エフェクト */
 .doom-background-effect.doom-starting {
-  animation: doom-expand 2s ease-out forwards;
+  animation: doom-expand 1s ease-out forwards;
 }
 
 @keyframes doom-expand {
@@ -114,7 +114,7 @@
     rgba(255, 0, 0, 0.1) 40%,
     rgba(139, 0, 0, 0.2) 100%
   );
-  animation: doom-pulse 3s ease-in-out infinite;
+  animation: doom-pulse 2s ease-in-out infinite;
 }
 
 .game-container.doom-warning .doom-background-effect {
@@ -124,7 +124,7 @@
     rgba(255, 50, 0, 0.08) 40%,
     rgba(200, 0, 0, 0.15) 100%
   );
-  animation: doom-warning-pulse 2s ease-in-out infinite;
+  animation: doom-warning-pulse 1.5s ease-in-out infinite;
 }
 
 .game-container.doom-active .doom-background-effect {
@@ -134,7 +134,7 @@
     rgba(255, 0, 0, 0.15) 30%,
     rgba(139, 0, 0, 0.25) 100%
   );
-  animation: doom-active-pulse 1.5s ease-in-out infinite;
+  animation: doom-active-pulse 1s ease-in-out infinite;
 }
 
 @keyframes doom-pulse {

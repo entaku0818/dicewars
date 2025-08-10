@@ -33,7 +33,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
   useEffect(() => {
     if (battleResult) {
       setIsRolling(true);
-      setTimeout(() => setIsRolling(false), 500);
+      setTimeout(() => setIsRolling(false), 300);
     }
   }, [battleResult]);
 
@@ -67,13 +67,13 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
             initial={{ scale: 0.8, opacity: 0, x: 100 }}
             animate={{ scale: 1, opacity: 1, x: 0 }}
             exit={{ scale: 0.8, opacity: 0, x: 100 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
           >
             <motion.div 
               className="battle-title"
               initial={{ y: -10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.1 }}
+              transition={{ delay: 0.05 }}
             >
               ⚔️ Battle Result ⚔️
             </motion.div>
@@ -82,7 +82,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
                 className="roll-group"
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
+                transition={{ delay: 0.1 }}
               >
                 <span className="roll-label attacker-label">⚔️ Attacker</span>
                 <div className="dice-container">
@@ -93,7 +93,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
                     className="roll-total"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    transition={{ delay: 0.8, type: "spring" }}
+                    transition={{ delay: 0.4, type: "spring" }}
                   >
                     = {battleResult.attacker.total}
                   </motion.span>
@@ -103,7 +103,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
                 className="roll-group"
                 initial={{ x: 50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.15 }}
               >
                 <span className="roll-label defender-label">🛡️ Defender</span>
                 <div className="dice-container">
@@ -114,7 +114,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
                     className="roll-total"
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    transition={{ delay: 0.8, type: "spring" }}
+                    transition={{ delay: 0.4, type: "spring" }}
                   >
                     = {battleResult.defender.total}
                   </motion.span>
@@ -125,7 +125,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
               className={`battle-winner ${battleResult.winner}`}
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
-              transition={{ delay: 1, type: "spring", stiffness: 200 }}
+              transition={{ delay: 0.5, type: "spring", stiffness: 300 }}
             >
               {battleResult.winner === 'attacker' ? 
                 '⚔️ ATTACKER WINS! ⚔️' : 

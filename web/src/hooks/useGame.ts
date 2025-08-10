@@ -124,13 +124,13 @@ export const useGame = (config: GameConfig) => {
         if (targets.length > 0) {
           const target = targets[Math.floor(Math.random() * targets.length)];
           if (target) {
-            await new Promise(resolve => setTimeout(resolve, 800)); // 遅延
+            await new Promise(resolve => setTimeout(resolve, 300)); // 遅延
             const result = engine.attack(territory.id, target.id);
             if (result) {
               setBattleResult(result);
               soundManager.play('battle_start');
               // バトル結果を表示する時間を確保
-              await new Promise(resolve => setTimeout(resolve, 2000));
+              await new Promise(resolve => setTimeout(resolve, 1200));
               setBattleResult(null);
             }
             updateGameState();
@@ -139,13 +139,13 @@ export const useGame = (config: GameConfig) => {
         }
       }
       
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 500));
       engine.endTurn();
       updateGameState();
       setIsProcessing(false);
     };
 
-    const timer = setTimeout(aiPlay, 1000);
+    const timer = setTimeout(aiPlay, 500);
     return () => clearTimeout(timer);
   }, [gameState.currentPlayerId, gameState.players, gameState.territories, gameState.phase, engine, updateGameState, setBattleResult]);
 
