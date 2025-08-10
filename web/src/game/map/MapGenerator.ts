@@ -15,8 +15,8 @@ export class MapGenerator {
   constructor(width: number = 800, height: number = 600, territoryCount: number = 20) {
     this.width = width;
     this.height = height;
-    // 領土数を増やしてマップを埋める
-    this.territoryCount = Math.max(territoryCount, 25);
+    // 領土数をそのまま使用
+    this.territoryCount = territoryCount;
   }
 
   generateMap(): Map<string, Territory> {
