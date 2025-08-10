@@ -34,13 +34,13 @@ export class GameEngine {
   private getMapSizeConfig() {
     switch (this.config.mapSize) {
       case 'small':
-        return { rows: 3, cols: 5, total: 15 };
+        return { rows: 4, cols: 6, total: 25 };
       case 'medium':
-        return { rows: 5, cols: 6, total: 30 };
+        return { rows: 6, cols: 8, total: 40 };
       case 'large':
-        return { rows: 7, cols: 8, total: 56 };
+        return { rows: 8, cols: 10, total: 60 };
       default:
-        return { rows: 3, cols: 5, total: 15 };
+        return { rows: 4, cols: 6, total: 25 };
     }
   }
 

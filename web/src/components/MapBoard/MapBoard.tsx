@@ -42,25 +42,48 @@ const MapBoard: React.FC<MapBoardProps> = ({
   return (
     <div className="map-board">
       <div className="map-background">
-        {/* 背景のグリッドパターン */}
+        {/* リアルな地図背景 */}
         <svg className="background-pattern" viewBox="0 0 800 600">
           <defs>
-            <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-              <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#333" strokeWidth="0.5" opacity="0.3"/>
+            {/* 海のグラデーション */}
+            <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style={{ stopColor: '#1a3d5c', stopOpacity: 1 }} />
+              <stop offset="50%" style={{ stopColor: '#2a5f7f', stopOpacity: 1 }} />
+              <stop offset="100%" style={{ stopColor: '#1a3d5c', stopOpacity: 1 }} />
+            </linearGradient>
+            
+            {/* 波パターン */}
+            <pattern id="wavePattern" x="0" y="0" width="100" height="20" patternUnits="userSpaceOnUse">
+              <path d="M0,10 Q25,5 50,10 T100,10" stroke="#2a5f7f" strokeWidth="0.5" fill="none" opacity="0.3"/>
+              <path d="M0,15 Q25,10 50,15 T100,15" stroke="#3a6f8f" strokeWidth="0.5" fill="none" opacity="0.2"/>
             </pattern>
             
             {/* 地形テクスチャ */}
             <filter id="paperTexture">
-              <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" result="noise" />
-              <feDiffuseLighting in="noise" lightingColor="white" surfaceScale="1">
-                <feDistantLight azimuth="45" elevation="60" />
-              </feDiffuseLighting>
+              <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="5" result="noise" seed="2" />
+              <feColorMatrix in="noise" type="saturate" values="0"/>
+              <feComponentTransfer>
+                <feFuncA type="discrete" tableValues=".5 .5 .5 .5 .5 .6 .7 .8 .9 1" />
+              </feComponentTransfer>
+              <feComposite operator="over" in2="SourceGraphic" />
+            </filter>
+            
+            {/* グロー効果 */}
+            <filter id="landGlow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
             </filter>
           </defs>
           
-          <rect width="800" height="600" fill="#2a3f2a"/>
-          <rect width="800" height="600" fill="url(#grid)"/>
-          <rect width="800" height="600" fill="#3a4f3a" opacity="0.3" filter="url(#paperTexture)"/>
+          {/* 海/背景 */}
+          <rect width="800" height="600" fill="url(#oceanGradient)"/>
+          <rect width="800" height="600" fill="url(#wavePattern)" opacity="0.5"/>
+          
+          {/* 大陸の影 */}
+          <ellipse cx="400" cy="300" rx="380" ry="280" fill="#0a2d4a" opacity="0.3" filter="url(#landGlow)"/>
         </svg>
       </div>
 
@@ -74,34 +97,7 @@ const MapBoard: React.FC<MapBoardProps> = ({
         {/* 海/背景 */}
         <rect width="800" height="600" fill="transparent"/>
         
-        {/* 接続線（道路/国境） */}
-        <g className="connections">
-          {Array.from(territories.values()).map(territory => (
-            territory.adjacentTerritoryIds.map(adjacentId => {
-              const adjacent = territories.get(adjacentId);
-              if (!adjacent || territory.id > adjacentId) return null;
-              
-              const isAllied = territory.ownerId === adjacent.ownerId && territory.ownerId !== null;
-              
-              return (
-                <motion.line
-                  key={`${territory.id}-${adjacentId}`}
-                  x1={territory.position.x}
-                  y1={territory.position.y}
-                  x2={adjacent.position.x}
-                  y2={adjacent.position.y}
-                  stroke={isAllied ? "#4a5f4a" : "#3a3a3a"}
-                  strokeWidth={isAllied ? "3" : "1"}
-                  strokeDasharray={isAllied ? "none" : "5,5"}
-                  opacity={isAllied ? 0.6 : 0.3}
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1, delay: Math.random() * 0.5 }}
-                />
-              );
-            })
-          ))}
-        </g>
+        {/* 接続線を描画しない - 六角形の境界線で十分 */}
         
         {/* 領土 */}
         <g className="territories">

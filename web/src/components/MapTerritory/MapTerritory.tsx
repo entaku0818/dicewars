@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import type { Territory as TerritoryType, Player, Position } from '../../game/types';
+import type { Territory as TerritoryType, Player } from '../../game/types';
 import './MapTerritory.css';
 
 interface MapTerritoryProps {
@@ -26,128 +26,124 @@ const MapTerritory: React.FC<MapTerritoryProps> = ({
     }
   };
 
-  // 多角形のパスを生成
-  const generatePath = (vertices: Position[]): string => {
-    if (!vertices || vertices.length < 3) {
-      // フォールバック：六角形を生成
-      const hexVertices = generateHexagon(territory.position, 45);
-      return `M ${hexVertices.map(v => `${v.x},${v.y}`).join(' L ')} Z`;
-    }
-    return `M ${vertices.map(v => `${v.x},${v.y}`).join(' L ')} Z`;
-  };
-
-  const generateHexagon = (center: Position, radius: number): Position[] => {
-    const vertices: Position[] = [];
-    for (let i = 0; i < 6; i++) {
-      const angle = (Math.PI * 2 * i) / 6 - Math.PI / 6;
-      vertices.push({
-        x: center.x + Math.cos(angle) * radius,
-        y: center.y + Math.sin(angle) * radius,
-      });
-    }
-    return vertices;
-  };
-
-  const pathData = generatePath(territory.vertices || []);
-
-  // 地形のパターンを選択
-  const getTerrainPattern = () => {
-    const patterns = ['terrain-grass', 'terrain-desert', 'terrain-mountain', 'terrain-forest'];
-    const index = Math.abs(territory.id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % patterns.length;
-    return patterns[index];
-  };
-
-  const terrainClass = getTerrainPattern();
-
   return (
-    <g
-      className={`map-territory ${isClickable ? 'clickable' : ''} ${isSelected ? 'selected' : ''} ${isHighlighted ? 'highlighted' : ''}`}
+    <motion.g
+      className="map-territory"
       onClick={handleClick}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3, delay: Math.random() * 0.2 }}
     >
-      {/* 地形の背景 */}
       <defs>
-        <pattern id={`${territory.id}-pattern`} x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-          <rect width="40" height="40" fill={owner?.color || '#666'} opacity="0.3"/>
-          <circle cx="10" cy="10" r="2" fill={owner?.color || '#666'} opacity="0.2"/>
-          <circle cx="30" cy="30" r="2" fill={owner?.color || '#666'} opacity="0.2"/>
-          <circle cx="30" cy="10" r="1" fill={owner?.color || '#666'} opacity="0.15"/>
-          <circle cx="10" cy="30" r="1" fill={owner?.color || '#666'} opacity="0.15"/>
+        {/* 地形パターン */}
+        <pattern id={`terrain-${territory.id}`} x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+          <circle cx="5" cy="5" r="0.5" fill="#000" opacity="0.1"/>
+          <circle cx="15" cy="12" r="0.7" fill="#000" opacity="0.1"/>
+          <circle cx="25" cy="8" r="0.5" fill="#000" opacity="0.1"/>
+          <circle cx="10" cy="20" r="0.6" fill="#000" opacity="0.1"/>
+          <circle cx="20" cy="25" r="0.5" fill="#000" opacity="0.1"/>
         </pattern>
-
-        <filter id={`${territory.id}-shadow`}>
-          <feDropShadow dx="2" dy="2" stdDeviation="3" floodOpacity="0.3"/>
+        
+        {/* 影効果 */}
+        <filter id={`shadow-${territory.id}`}>
+          <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+          <feOffset dx="1" dy="1" result="offsetblur"/>
+          <feFlood floodColor="#000000" floodOpacity="0.3"/>
+          <feComposite in2="offsetblur" operator="in"/>
+          <feMerge>
+            <feMergeNode/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
         </filter>
       </defs>
 
-      {/* メインの領土形状 */}
-      <motion.path
-        d={pathData}
-        className={`territory-shape ${terrainClass}`}
-        fill={`url(#${territory.id}-pattern)`}
-        stroke={owner?.color || '#666'}
-        strokeWidth={isSelected ? 3 : 2}
-        filter={`url(#${territory.id}-shadow)`}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ 
-          opacity: owner ? 0.9 : 0.6, 
-          scale: isSelected ? 1.05 : 1,
+      {/* メインの六角形 */}
+      <polygon
+        points={territory.vertices.map(v => `${v.x},${v.y}`).join(' ')}
+        fill={owner?.color || '#556B2F'}
+        stroke={isSelected ? '#FFD700' : (isHighlighted ? '#FF6B6B' : owner?.color || '#2a4a3a')}
+        strokeWidth={isSelected ? '4' : (isHighlighted ? '3' : '2')}
+        opacity={owner ? 0.85 : 0.6}
+        strokeLinejoin="round"
+        filter={`url(#shadow-${territory.id})`}
+        style={{ 
+          cursor: isClickable ? 'pointer' : 'default',
+          transition: 'all 0.2s ease'
         }}
-        whileHover={isClickable ? { scale: 1.02 } : {}}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
       />
-
-      {/* 国境線のハイライト */}
+      
+      {/* 地形テクスチャ */}
+      <polygon
+        points={territory.vertices.map(v => `${v.x},${v.y}`).join(' ')}
+        fill={`url(#terrain-${territory.id})`}
+        opacity={0.3}
+        pointerEvents="none"
+      />
+      
+      {/* 選択時のグロー効果 */}
       {isSelected && (
-        <motion.path
-          d={pathData}
+        <motion.polygon
+          points={territory.vertices.map(v => `${v.x},${v.y}`).join(' ')}
           fill="none"
           stroke="#FFD700"
-          strokeWidth="4"
-          strokeDasharray="10,5"
-          opacity="0.8"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-        />
-      )}
-
-      {/* 攻撃可能な領土のハイライト */}
-      {isHighlighted && !isSelected && (
-        <motion.path
-          d={pathData}
-          fill="none"
-          stroke="#FF6B6B"
-          strokeWidth="3"
-          opacity="0.6"
-          animate={{ 
-            strokeWidth: [3, 4, 3],
-            opacity: [0.4, 0.7, 0.4] 
+          strokeWidth="2"
+          opacity={0.6}
+          pointerEvents="none"
+          animate={{
+            opacity: [0.4, 0.8, 0.4],
+            strokeWidth: [2, 3, 2]
           }}
-          transition={{ duration: 1.5, repeat: Infinity }}
+          transition={{
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      )}
+      
+      {/* ハイライト効果 */}
+      {isHighlighted && !isSelected && (
+        <motion.polygon
+          points={territory.vertices.map(v => `${v.x},${v.y}`).join(' ')}
+          fill="#FF6B6B"
+          opacity={0.2}
+          pointerEvents="none"
+          animate={{
+            opacity: [0.1, 0.3, 0.1]
+          }}
+          transition={{
+            duration: 1,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
         />
       )}
 
-      {/* サイコロ数の表示 */}
+      {/* 情報表示エリア */}
       <g className="territory-info">
-        {/* 背景円 */}
-        <motion.circle
+        {/* 背景 */}
+        <circle
           cx={territory.position.x}
           cy={territory.position.y}
-          r="25"
-          fill={owner?.color || '#666'}
-          opacity="0.9"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2 }}
+          r="22"
+          fill="#000"
+          opacity="0.4"
+        />
+        <circle
+          cx={territory.position.x}
+          cy={territory.position.y}
+          r="20"
+          fill="white"
+          opacity="0.95"
         />
         
         {/* サイコロアイコン */}
         <text
           x={territory.position.x}
-          y={territory.position.y - 8}
+          y={territory.position.y - 5}
           textAnchor="middle"
-          fontSize="16"
-          fill="white"
+          fontSize="14"
+          fill="#333"
         >
           🎲
         </text>
@@ -155,30 +151,31 @@ const MapTerritory: React.FC<MapTerritoryProps> = ({
         {/* サイコロ数 */}
         <text
           x={territory.position.x}
-          y={territory.position.y + 10}
+          y={territory.position.y + 8}
           textAnchor="middle"
-          className="dice-count"
-          fill="white"
-          fontSize="18"
+          fontSize="14"
           fontWeight="bold"
+          fill="#333"
         >
           {territory.diceCount}
         </text>
       </g>
 
-      {/* 領土名（オプション） */}
-      <text
-        x={territory.position.x}
-        y={territory.position.y - 35}
-        textAnchor="middle"
-        fontSize="10"
-        fill={owner?.color || '#666'}
-        opacity="0.8"
-        fontWeight="bold"
-      >
-        {owner?.name || 'Neutral'}
-      </text>
-    </g>
+      {/* プレイヤー名 */}
+      {owner && (
+        <text
+          x={territory.position.x}
+          y={territory.position.y - 32}
+          textAnchor="middle"
+          fontSize="9"
+          fill={owner.color}
+          fontWeight="bold"
+          opacity="0.8"
+        >
+          {owner.name}
+        </text>
+      )}
+    </motion.g>
   );
 };
 

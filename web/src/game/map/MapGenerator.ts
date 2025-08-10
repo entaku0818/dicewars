@@ -15,7 +15,8 @@ export class MapGenerator {
   constructor(width: number = 800, height: number = 600, territoryCount: number = 20) {
     this.width = width;
     this.height = height;
-    this.territoryCount = territoryCount;
+    // 領土数を増やしてマップを埋める
+    this.territoryCount = Math.max(territoryCount, 25);
   }
 
   generateMap(): Map<string, Territory> {
@@ -41,97 +42,73 @@ export class MapGenerator {
 
   private createHexGrid(): VoronoiCell[] {
     const cells: VoronoiCell[] = [];
-    const hexRadius = 40;
+    const hexRadius = 50;  // 大きくして隙間を埋める
     const hexHeight = hexRadius * Math.sqrt(3);
     const hexWidth = hexRadius * 2;
     
-    // グリッドの行と列を計算
-    const cols = Math.floor((this.width - 40) / (hexWidth * 0.75)) + 1;
-    const rows = Math.floor((this.height - 40) / hexHeight) + 1;
+    // グリッドの行と列を計算（より密に配置）
+    const cols = Math.floor(this.width / (hexWidth * 0.75)) + 1;
+    const rows = Math.floor(this.height / (hexHeight * 0.86)) + 1;  // 行間を狭める
     
-    // 実際の領土数を調整
-    const targetCount = Math.min(this.territoryCount, cols * rows);
-    const skipPattern = this.generateSkipPattern(cols * rows, targetCount);
+    // グリッド配列を作成（隣接関係の計算用）
+    const grid: (VoronoiCell | null)[][] = [];
+    for (let i = 0; i < rows; i++) {
+      grid[i] = new Array(cols).fill(null);
+    }
     
     let cellIndex = 0;
-    let gridIndex = 0;
+    
+    // 中央から外側に向かって領土を配置
+    const centerRow = Math.floor(rows / 2);
+    const centerCol = Math.floor(cols / 2);
+    const positions: Array<{ row: number; col: number; distance: number }> = [];
     
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
-        // ランダムにいくつかのセルをスキップして自然な形にする
-        if (skipPattern[gridIndex++]) {
-          continue;
-        }
-        
-        // オフセット（偶数行は右にずらす）
-        const offset = row % 2 === 0 ? 0 : hexWidth * 0.375;
-        
-        const center: Position = {
-          x: 40 + col * hexWidth * 0.75 + offset,
-          y: 40 + row * hexHeight
-        };
-        
-        // 境界外チェック
-        if (center.x > this.width - 30 || center.y > this.height - 30) {
-          continue;
-        }
-        
-        // 六角形の頂点を生成（少しランダム性を加える）
-        const vertices = this.createHexagonVertices(center, hexRadius);
-        
-        cells.push({
-          id: `territory-${cellIndex}`,
-          center,
-          vertices,
-          neighbors: [] // 後で設定
-        });
-        
-        cellIndex++;
-        if (cellIndex >= targetCount) break;
+        const distance = Math.abs(row - centerRow) + Math.abs(col - centerCol);
+        positions.push({ row, col, distance });
       }
-      if (cellIndex >= targetCount) break;
     }
     
-    // 隣接関係を計算
-    this.calculateNeighbors(cells);
+    // 中心からの距離でソート
+    positions.sort((a, b) => a.distance - b.distance);
+    
+    // 必要な領土数だけ配置
+    for (let i = 0; i < Math.min(this.territoryCount, positions.length); i++) {
+      const { row, col } = positions[i];
+      
+      // オフセット（偶数行は右にずらす）
+      const offset = row % 2 === 0 ? 0 : hexWidth * 0.375;
+      
+      const center: Position = {
+        x: 20 + col * hexWidth * 0.75 + offset,
+        y: 20 + row * hexHeight * 0.86  // 縦の間隔を狭める
+      };
+      
+      // 境界外チェック（より緩い条件）
+      if (center.x > this.width + hexRadius || center.y > this.height + hexRadius) {
+        continue;
+      }
+      
+      // 六角形の頂点を生成（少しランダム性を加える）
+      const vertices = this.createHexagonVertices(center, hexRadius);
+      
+      const cell: VoronoiCell = {
+        id: `territory-${cellIndex}`,
+        center,
+        vertices,
+        neighbors: []
+      };
+      
+      cells.push(cell);
+      grid[row][col] = cell;
+      cellIndex++;
+    }
+    
+    // グリッドベースで隣接関係を計算
+    this.calculateGridNeighbors(cells, grid, rows, cols);
     
     return cells;
-  }
-
-  private generateSkipPattern(total: number, target: number): boolean[] {
-    const pattern: boolean[] = new Array(total).fill(false);
-    const toSkip = total - target;
-    
-    if (toSkip <= 0) return pattern;
-    
-    // エッジ付近のセルを優先的にスキップ
-    const skipIndices: number[] = [];
-    const centerCol = Math.floor(Math.sqrt(total) / 2);
-    const centerRow = centerCol;
-    
-    for (let i = 0; i < total; i++) {
-      skipIndices.push(i);
-    }
-    
-    // 中心から遠い順にソート
-    skipIndices.sort((a, b) => {
-      const colA = a % Math.floor(Math.sqrt(total));
-      const rowA = Math.floor(a / Math.sqrt(total));
-      const colB = b % Math.floor(Math.sqrt(total));
-      const rowB = Math.floor(b / Math.sqrt(total));
-      
-      const distA = Math.abs(colA - centerCol) + Math.abs(rowA - centerRow);
-      const distB = Math.abs(colB - centerCol) + Math.abs(rowB - centerRow);
-      
-      return distB - distA;
-    });
-    
-    // 遠い場所から順にスキップ
-    for (let i = 0; i < toSkip && i < skipIndices.length; i++) {
-      pattern[skipIndices[i]] = true;
-    }
-    
-    return pattern;
   }
 
   private createHexagonVertices(center: Position, radius: number): Position[] {
@@ -140,8 +117,8 @@ export class MapGenerator {
     
     for (let i = 0; i < 6; i++) {
       const angle = (i * Math.PI / 3) + angleOffset;
-      // 少しランダム性を加える
-      const variation = 0.9 + Math.random() * 0.2;
+      // ランダム性を減らして隙間を最小化
+      const variation = 0.95 + Math.random() * 0.1;
       const r = radius * variation;
       
       vertices.push({
@@ -153,53 +130,115 @@ export class MapGenerator {
     return vertices;
   }
 
-  private calculateNeighbors(cells: VoronoiCell[]): void {
-    const maxDistance = 85; // 隣接とみなす最大距離
-    
-    for (let i = 0; i < cells.length; i++) {
-      const cell = cells[i];
-      const neighbors: string[] = [];
-      
-      for (let j = 0; j < cells.length; j++) {
-        if (i === j) continue;
+  private calculateGridNeighbors(
+    cells: VoronoiCell[], 
+    grid: (VoronoiCell | null)[][], 
+    rows: number, 
+    cols: number
+  ): void {
+    // グリッドベースで正確な隣接関係を計算
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const cell = grid[row][col];
+        if (!cell) continue;
         
-        const other = cells[j];
+        const neighbors: string[] = [];
+        
+        // 六角形グリッドの隣接パターン
+        // 偶数行と奇数行で隣接パターンが異なる
+        const isEvenRow = row % 2 === 0;
+        
+        const neighborOffsets = isEvenRow ? [
+          // 偶数行の隣接オフセット
+          { dr: -1, dc: -1 }, // 左上
+          { dr: -1, dc: 0 },  // 右上
+          { dr: 0, dc: -1 },  // 左
+          { dr: 0, dc: 1 },   // 右
+          { dr: 1, dc: -1 },  // 左下
+          { dr: 1, dc: 0 }    // 右下
+        ] : [
+          // 奇数行の隣接オフセット
+          { dr: -1, dc: 0 },  // 左上
+          { dr: -1, dc: 1 },  // 右上
+          { dr: 0, dc: -1 },  // 左
+          { dr: 0, dc: 1 },   // 右
+          { dr: 1, dc: 0 },   // 左下
+          { dr: 1, dc: 1 }    // 右下
+        ];
+        
+        for (const { dr, dc } of neighborOffsets) {
+          const newRow = row + dr;
+          const newCol = col + dc;
+          
+          if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols) {
+            const neighbor = grid[newRow][newCol];
+            if (neighbor) {
+              neighbors.push(neighbor.id);
+            }
+          }
+        }
+        
+        cell.neighbors = neighbors;
+      }
+    }
+    
+    // 連結性を確保
+    this.ensureConnectivity(cells);
+  }
+  
+  private ensureConnectivity(cells: VoronoiCell[]): void {
+    // 孤立した領土がないか確認
+    const visited = new Set<string>();
+    const queue: string[] = [];
+    
+    if (cells.length === 0) return;
+    
+    // 最初の領土から開始
+    queue.push(cells[0].id);
+    visited.add(cells[0].id);
+    
+    // BFSで連結成分を探索
+    while (queue.length > 0) {
+      const currentId = queue.shift()!;
+      const current = cells.find(c => c.id === currentId);
+      if (!current) continue;
+      
+      for (const neighborId of current.neighbors) {
+        if (!visited.has(neighborId)) {
+          visited.add(neighborId);
+          queue.push(neighborId);
+        }
+      }
+    }
+    
+    // 連結されていない領土を見つける
+    const unconnected = cells.filter(c => !visited.has(c.id));
+    
+    // 連結されていない領土を最寄りの領土に接続
+    for (const isolated of unconnected) {
+      let minDistance = Infinity;
+      let nearestCell: VoronoiCell | null = null;
+      
+      for (const other of cells) {
+        if (other.id === isolated.id) continue;
+        
         const distance = Math.sqrt(
-          Math.pow(cell.center.x - other.center.x, 2) +
-          Math.pow(cell.center.y - other.center.y, 2)
+          Math.pow(isolated.center.x - other.center.x, 2) +
+          Math.pow(isolated.center.y - other.center.y, 2)
         );
         
-        if (distance < maxDistance) {
-          neighbors.push(other.id);
+        if (distance < minDistance && visited.has(other.id)) {
+          minDistance = distance;
+          nearestCell = other;
         }
       }
       
-      cell.neighbors = neighbors;
-    }
-    
-    // 孤立した領土を除去
-    for (let i = cells.length - 1; i >= 0; i--) {
-      if (cells[i].neighbors.length === 0) {
-        cells.splice(i, 1);
+      if (nearestCell) {
+        // 相互に隣接関係を追加
+        isolated.neighbors.push(nearestCell.id);
+        nearestCell.neighbors.push(isolated.id);
+        visited.add(isolated.id);
       }
-    }
-    
-    // インデックスを再計算
-    cells.forEach((cell, index) => {
-      cell.id = `territory-${index}`;
-    });
-    
-    // 隣接関係を再計算
-    for (const cell of cells) {
-      const newNeighbors: string[] = [];
-      for (const neighborId of cell.neighbors) {
-        const neighbor = cells.find(c => c.id === neighborId || 
-          neighborId.includes(c.id.split('-')[1]));
-        if (neighbor) {
-          newNeighbors.push(neighbor.id);
-        }
-      }
-      cell.neighbors = newNeighbors;
     }
   }
 }
