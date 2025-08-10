@@ -75,7 +75,7 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
         onComplete={handleTurnTransitionComplete}
       />
 
-      <DebugPanel />
+      {import.meta.env.DEV && <DebugPanel />}
     </div>
   );
 };

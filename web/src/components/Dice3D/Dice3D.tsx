@@ -15,6 +15,12 @@ const Dice3D: React.FC<Dice3DProps> = ({
   color = '#fff',
   size = 60 
 }) => {
+  // ランダムな回転数を生成（リアルな転がり感を演出）
+  const randomRotations = React.useMemo(() => ({
+    x: 360 * (3 + Math.random() * 2),
+    y: 360 * (3 + Math.random() * 2),
+    z: 360 * (1 + Math.random()),
+  }), []);
   const dotPositions: { [key: number]: { x: number; y: number }[] } = {
     1: [{ x: 50, y: 50 }],
     2: [{ x: 30, y: 30 }, { x: 70, y: 70 }],
@@ -66,23 +72,34 @@ const Dice3D: React.FC<Dice3DProps> = ({
   const rotation = getRotation();
 
   return (
-    <div className="dice-3d-container" style={{ width: size, height: size }}>
+    <motion.div 
+      className="dice-3d-container" 
+      style={{ width: size, height: size }}
+      animate={isRolling ? {
+        scale: [1, 1.2, 1],
+        y: [0, -30, 0],
+      } : {}}
+      transition={{
+        duration: 1.5,
+        times: [0, 0.3, 1]
+      }}
+    >
       <motion.div
         className="dice-3d"
         style={{ width: size, height: size }}
         animate={isRolling ? {
-          rotateX: [0, 720, rotation.x],
-          rotateY: [0, 720, rotation.y],
-          rotateZ: [0, 720, rotation.z],
+          rotateX: [0, randomRotations.x, rotation.x],
+          rotateY: [0, randomRotations.y, rotation.y],
+          rotateZ: [0, randomRotations.z, rotation.z],
         } : {
           rotateX: rotation.x,
           rotateY: rotation.y,
           rotateZ: rotation.z,
         }}
         transition={isRolling ? {
-          duration: 1.5,
-          ease: "easeOut",
-          times: [0, 0.8, 1]
+          duration: 1.8,
+          ease: [0.25, 0.1, 0.25, 1],
+          times: [0, 0.7, 1]
         } : {
           duration: 0.3
         }}
@@ -94,7 +111,32 @@ const Dice3D: React.FC<Dice3DProps> = ({
         <Face faceValue={5} rotation={`rotateX(-90deg) translateZ(${size/2}px)`} />
         <Face faceValue={6} rotation={`rotateX(90deg) translateZ(${size/2}px)`} />
       </motion.div>
-    </div>
+      {isRolling && (
+        <motion.div
+          className="dice-shadow"
+          initial={{ opacity: 0.3, scale: 1 }}
+          animate={{
+            opacity: [0.3, 0.1, 0.3],
+            scale: [1, 1.3, 1],
+          }}
+          transition={{
+            duration: 1.5,
+            times: [0, 0.3, 1]
+          }}
+          style={{
+            position: 'absolute',
+            bottom: -5,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: size * 0.8,
+            height: size * 0.2,
+            background: 'radial-gradient(ellipse, rgba(0,0,0,0.4), transparent)',
+            borderRadius: '50%',
+            filter: 'blur(4px)',
+          }}
+        />
+      )}
+    </motion.div>
   );
 };
 
