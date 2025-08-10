@@ -35,14 +35,6 @@ const GameUI: React.FC<GameUIProps> = ({
         <span>Turn {gameState.turn}</span>
       </div>
 
-      {isHumanTurn && !battleResult && (
-        <div className="help-text">
-          <p>📍 <span style={{color: currentPlayer?.color, fontWeight: 'bold'}}>{currentPlayer?.name}</span>のターン</p>
-          <p>1️⃣ サイコロが2個以上ある自分の領土をクリック</p>
-          <p>2️⃣ 隣接する敵の領土をクリックして攻撃</p>
-        </div>
-      )}
-
       <AnimatePresence>
         {battleResult && (
           <motion.div 
@@ -121,23 +113,32 @@ const GameUI: React.FC<GameUIProps> = ({
 
       {isHumanTurn && (
         <motion.div 
-          className="controls"
+          className="controls-container"
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          <motion.button
-            className="end-turn-button"
-            onClick={onEndTurn}
-            disabled={isProcessing}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onMouseEnter={() => soundManager.play('hover', 0.2)}
-            onMouseDown={() => soundManager.play('click')}
-          >
-            <span>End Turn</span>
-            <span className="turn-arrow">→</span>
-          </motion.button>
+          {!battleResult && (
+            <div className="help-text-bottom">
+              <p>📍 <span style={{color: currentPlayer?.color, fontWeight: 'bold'}}>{currentPlayer?.name}</span>のターン</p>
+              <p>1️⃣ サイコロが2個以上ある自分の領土をクリック</p>
+              <p>2️⃣ 隣接する敵の領土をクリックして攻撃</p>
+            </div>
+          )}
+          <div className="controls">
+            <motion.button
+              className="end-turn-button"
+              onClick={onEndTurn}
+              disabled={isProcessing}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onMouseEnter={() => soundManager.play('hover', 0.2)}
+              onMouseDown={() => soundManager.play('click')}
+            >
+              <span>End Turn</span>
+              <span className="turn-arrow">→</span>
+            </motion.button>
+          </div>
         </motion.div>
       )}
 

@@ -29,9 +29,9 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
   return (
     <div className="game-container">
       <div className="game-header">
-        <h1 className="game-title">DICEWARS</h1>
+        <h1 className="game-title">陣取りサイコロ</h1>
         <button className="back-to-title" onClick={onBackToTitle}>
-          ← Back to Title
+          ← タイトルに戻る
         </button>
       </div>
 
