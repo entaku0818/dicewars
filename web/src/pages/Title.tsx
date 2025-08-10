@@ -33,11 +33,11 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
       >
         <h1 className="main-title">
           <span className="dice-icon">🎲</span>
-          DICEWARS
+          陣取りサイコロ
           <span className="dice-icon">🎲</span>
         </h1>
         
-        <p className="subtitle">Conquer the world with dice!</p>
+        <p className="subtitle">サイコロで領土を奪い合え！</p>
 
         {!showMenu && !gameMode ? (
           <motion.div
@@ -46,7 +46,7 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <h2>Select Game Mode</h2>
+            <h2>ゲームモードを選択</h2>
             <div className="mode-buttons">
               <motion.button
                 className="mode-button"
@@ -58,8 +58,8 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
                 whileTap={{ scale: 0.95 }}
               >
                 <span className="mode-icon">🤖</span>
-                <span className="mode-title">Single Player</span>
-                <span className="mode-desc">Play against AI</span>
+                <span className="mode-title">ひとりで遊ぶ</span>
+                <span className="mode-desc">AIと対戦</span>
               </motion.button>
               <motion.button
                 className="mode-button"
@@ -71,8 +71,8 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
                 whileTap={{ scale: 0.95 }}
               >
                 <span className="mode-icon">👥</span>
-                <span className="mode-title">Local Multiplayer</span>
-                <span className="mode-desc">Pass & Play with friends</span>
+                <span className="mode-title">みんなで遊ぶ</span>
+                <span className="mode-desc">同じ端末で交代でプレイ</span>
               </motion.button>
             </div>
           </motion.div>
@@ -84,7 +84,7 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
             transition={{ duration: 0.3 }}
           >
             <div className="menu-section">
-              <h3>Players</h3>
+              <h3>プレイヤー数</h3>
               <div className="button-group">
                 {[2, 3, 4, 5, 6].map(num => (
                   <button
@@ -99,7 +99,7 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
             </div>
 
             <div className="menu-section">
-              <h3>Map Size</h3>
+              <h3>マップサイズ</h3>
               <div className="button-group">
                 {(['small', 'medium', 'large'] as const).map(size => (
                   <button
@@ -107,7 +107,7 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
                     className={`option-button ${config.mapSize === size ? 'active' : ''}`}
                     onClick={() => setConfig({ ...config, mapSize: size })}
                   >
-                    {size.toUpperCase()}
+                    {size === 'small' ? '小' : size === 'medium' ? '中' : '大'}
                   </button>
                 ))}
               </div>
@@ -115,7 +115,7 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
 
             {gameMode === 'single' && (
               <div className="menu-section">
-                <h3>AI Difficulty</h3>
+                <h3>AIの強さ</h3>
                 <div className="button-group">
                   {(['easy', 'normal', 'hard'] as const).map(difficulty => (
                     <button
@@ -123,7 +123,7 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
                       className={`option-button ${config.aiDifficulty === difficulty ? 'active' : ''}`}
                       onClick={() => setConfig({ ...config, aiDifficulty: difficulty })}
                     >
-                      {difficulty.toUpperCase()}
+                      {difficulty === 'easy' ? 'かんたん' : difficulty === 'normal' ? 'ふつう' : 'むずかしい'}
                     </button>
                   ))}
                 </div>
@@ -132,8 +132,8 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
 
             {gameMode === 'local' && (
               <div className="menu-section">
-                <h3>Game Settings</h3>
-                <p className="mode-info">🎮 Players will take turns on the same device</p>
+                <h3>ゲーム設定</h3>
+                <p className="mode-info">🎮 同じ端末で交代にプレイします</p>
               </div>
             )}
 
@@ -144,7 +144,7 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                PLAY NOW
+                ゲーム開始
               </motion.button>
               <button
                 className="back-button"
@@ -153,7 +153,7 @@ const Title: React.FC<TitleProps> = ({ onStartGame }) => {
                   setGameMode(null);
                 }}
               >
-                BACK
+                戻る
               </button>
             </div>
           </motion.div>

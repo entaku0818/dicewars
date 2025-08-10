@@ -75,3 +75,87 @@
 .game-over button:hover {
   background: #5a67d8;
 }
+
+/* 破滅の時エフェクト */
+.doom-background-effect {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(255, 0, 0, 0.05) 40%,
+    rgba(139, 0, 0, 0.15) 100%
+  );
+  animation: doom-pulse 3s ease-in-out infinite;
+}
+
+.game-container.doom-warning .doom-background-effect {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(255, 50, 0, 0.03) 40%,
+    rgba(200, 0, 0, 0.08) 100%
+  );
+  animation: doom-warning-pulse 2s ease-in-out infinite;
+}
+
+.game-container.doom-active .doom-background-effect {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(255, 0, 0, 0.1) 30%,
+    rgba(139, 0, 0, 0.25) 100%
+  );
+  animation: doom-active-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes doom-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes doom-warning-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.01);
+  }
+}
+
+@keyframes doom-active-pulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+/* マップボードも影響を受ける */
+.game-container.doom-active .map-board {
+  box-shadow: 
+    0 20px 60px rgba(255, 0, 0, 0.3),
+    0 0 0 2px rgba(139, 0, 0, 0.5),
+    inset 0 0 100px rgba(255, 0, 0, 0.1);
+}
+
+.game-container.doom-warning .map-board {
+  box-shadow: 
+    0 20px 60px rgba(255, 50, 0, 0.2),
+    0 0 0 2px rgba(200, 50, 0, 0.3),
+    inset 0 0 100px rgba(255, 50, 0, 0.05);
+}

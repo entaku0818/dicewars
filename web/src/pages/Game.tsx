@@ -6,6 +6,7 @@ import GameUI from '../components/GameUI/GameUI';
 import VictoryScreen from '../components/VictoryScreen/VictoryScreen';
 import TurnTransition from '../components/TurnTransition/TurnTransition';
 import DebugPanel from '../components/DebugPanel/DebugPanel';
+import DoomCounter from '../components/DoomCounter/DoomCounter';
 import type { GameConfig } from '../game/types';
 import './Game.css';
 
@@ -26,8 +27,22 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
     handleTurnTransitionComplete,
   } = useGame(config);
 
+  const isDoomActive = gameState.doomState?.isActive || false;
+  const isDoomWarning = gameState.doomState && gameState.doomState.turnsUntilDoom <= 5 && gameState.doomState.turnsUntilDoom > 0;
+
   return (
-    <div className="game-container">
+    <div className={`game-container ${isDoomActive ? 'doom-active' : ''} ${isDoomWarning ? 'doom-warning' : ''}`}>
+      {/* 破滅の時背景エフェクト */}
+      {(isDoomActive || isDoomWarning) && (
+        <div className="doom-background-effect" />
+      )}
+      
+      <DoomCounter 
+        turn={gameState.turn}
+        doomState={gameState.doomState}
+        doomStartTurn={gameState.doomConfig?.startTurn || 20}
+      />
+      
       <div className="game-header">
         <h1 className="game-title">陣取りサイコロ</h1>
         <button className="back-to-title" onClick={onBackToTitle}>
@@ -48,6 +63,9 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
         currentPlayerId={gameState.currentPlayerId}
         selectedTerritoryId={selectedTerritoryId}
         onTerritoryClick={handleTerritoryClick}
+        battleResult={battleResult}
+        isProcessing={isProcessing}
+        onEndTurn={handleEndTurn}
       />
       
       <div className="game-info">

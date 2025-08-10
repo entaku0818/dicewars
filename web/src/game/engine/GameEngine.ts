@@ -16,6 +16,19 @@ export class GameEngine {
     const players = this.createPlayers();
     this.distributeTerritoriesAndDice(territories, players);
 
+    // 破滅の時設定（デフォルト20ターン後）
+    const doomConfig = {
+      enabled: this.config.doomEnabled !== false, // デフォルトで有効
+      startTurn: 20,
+      level: 1 as const, // レベル1: 領土崩壊
+    };
+
+    const doomState = {
+      isActive: false,
+      turnsUntilDoom: doomConfig.startTurn,
+      territoriesDestroyed: 0,
+    };
+
     return {
       territories,
       players,
@@ -23,6 +36,8 @@ export class GameEngine {
       phase: 'attack',
       turn: 1,
       winnerId: null,
+      doomConfig,
+      doomState,
     };
   }
 
@@ -173,6 +188,9 @@ export class GameEngine {
     this.state.currentPlayerId = playerIds[nextIndex];
     this.state.turn++;
     
+    // 破滅の時処理
+    this.processDoom();
+    
     // 補充フェーズ（簡易版：ランダムに3個のサイコロを配置）
     this.reinforceCurrentPlayer();
   }
@@ -235,5 +253,44 @@ export class GameEngine {
     return Array.from(this.state.territories.values())
       .filter(t => t.ownerId === playerId)
       .reduce((sum, t) => sum + t.diceCount, 0);
+  }
+
+  private processDoom(): void {
+    if (!this.state.doomConfig?.enabled || !this.state.doomState) return;
+
+    // カウントダウンを減らす
+    this.state.doomState.turnsUntilDoom--;
+
+    // 破滅の時が発動
+    if (this.state.doomState.turnsUntilDoom <= 0) {
+      this.state.doomState.isActive = true;
+      
+      // レベル1: 領土崩壊
+      if (this.state.doomConfig.level === 1) {
+        this.destroyRandomTerritory();
+      }
+    }
+  }
+
+  private destroyRandomTerritory(): void {
+    const ownedTerritories = Array.from(this.state.territories.values())
+      .filter(t => t.ownerId !== null);
+    
+    if (ownedTerritories.length <= 2) return; // 最後の2領土は破壊しない
+    
+    // ランダムに領土を選択
+    const randomIndex = Math.floor(Math.random() * ownedTerritories.length);
+    const territory = ownedTerritories[randomIndex];
+    
+    // 領土を中立化
+    territory.ownerId = null;
+    territory.diceCount = 1;
+    
+    if (this.state.doomState) {
+      this.state.doomState.territoriesDestroyed++;
+    }
+    
+    console.log(`破滅の時: 領土 ${territory.id} が崩壊しました`);
+    soundManager.play('player_eliminated'); // 崩壊音
   }
 }

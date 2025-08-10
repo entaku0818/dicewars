@@ -10,6 +10,9 @@ interface MapBoardProps {
   currentPlayerId: string;
   selectedTerritoryId: string | null;
   onTerritoryClick: (territoryId: string) => void;
+  battleResult?: any;
+  isProcessing?: boolean;
+  onEndTurn?: () => void;
 }
 
 const MapBoard: React.FC<MapBoardProps> = ({
@@ -18,7 +21,12 @@ const MapBoard: React.FC<MapBoardProps> = ({
   currentPlayerId,
   selectedTerritoryId,
   onTerritoryClick,
+  battleResult,
+  isProcessing,
+  onEndTurn,
 }) => {
+  const currentPlayer = players.get(currentPlayerId);
+  const isHumanTurn = currentPlayer && !currentPlayer.isAI;
   // 選択中の領土から攻撃可能な領土を取得
   const getAttackableTerritories = (): Set<string> => {
     if (!selectedTerritoryId) return new Set();
@@ -138,6 +146,27 @@ const MapBoard: React.FC<MapBoardProps> = ({
           </g>
         </g>
       </motion.svg>
+      
+      {/* マップ内の右下にUIを配置 */}
+      {isHumanTurn && onEndTurn && (
+        <div className="map-controls">
+          {!battleResult && (
+            <div className="map-help-text">
+              <p>📍 <span style={{color: currentPlayer?.color, fontWeight: 'bold'}}>{currentPlayer?.name}</span>のターン</p>
+              <p>1️⃣ サイコロ2個以上の領土を選択</p>
+              <p>2️⃣ 隣接する敵領土を攻撃</p>
+            </div>
+          )}
+          <button
+            className="map-end-turn-button"
+            onClick={onEndTurn}
+            disabled={isProcessing}
+          >
+            <span>END TURN</span>
+            <span className="turn-arrow">→</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

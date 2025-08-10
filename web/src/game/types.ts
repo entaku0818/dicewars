@@ -35,6 +35,8 @@ export interface GameState {
   turn: number;
   winnerId: PlayerId | null;
   activeEffects?: PlayerEffects;
+  doomConfig?: DoomConfig;
+  doomState?: DoomState;
 }
 
 export interface BattleResult {
@@ -73,4 +75,17 @@ export interface GameConfig {
   mapSize: 'small' | 'medium' | 'large';
   aiDifficulty: 'easy' | 'normal' | 'hard';
   isLocalMultiplayer?: boolean;
+  doomEnabled?: boolean;
+}
+
+export interface DoomConfig {
+  enabled: boolean;
+  startTurn: number; // 破滅開始ターン
+  level: 1 | 2 | 3 | 4; // 破滅レベル
+}
+
+export interface DoomState {
+  isActive: boolean;
+  turnsUntilDoom: number;
+  territoriesDestroyed: number;
 }
