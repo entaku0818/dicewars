@@ -45,17 +45,17 @@ const MapBoard: React.FC<MapBoardProps> = ({
         {/* リアルな地図背景 */}
         <svg className="background-pattern" viewBox="0 0 800 600">
           <defs>
-            {/* 海のグラデーション */}
+            {/* 背景のグラデーション */}
             <linearGradient id="oceanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" style={{ stopColor: '#1a3d5c', stopOpacity: 1 }} />
-              <stop offset="50%" style={{ stopColor: '#2a5f7f', stopOpacity: 1 }} />
-              <stop offset="100%" style={{ stopColor: '#1a3d5c', stopOpacity: 1 }} />
+              <stop offset="0%" style={{ stopColor: '#ffffff', stopOpacity: 1 }} />
+              <stop offset="50%" style={{ stopColor: '#ffffff', stopOpacity: 1 }} />
+              <stop offset="100%" style={{ stopColor: '#ffffff', stopOpacity: 1 }} />
             </linearGradient>
             
-            {/* 波パターン */}
+            {/* 模様パターン */}
             <pattern id="wavePattern" x="0" y="0" width="100" height="20" patternUnits="userSpaceOnUse">
-              <path d="M0,10 Q25,5 50,10 T100,10" stroke="#2a5f7f" strokeWidth="0.5" fill="none" opacity="0.3"/>
-              <path d="M0,15 Q25,10 50,15 T100,15" stroke="#3a6f8f" strokeWidth="0.5" fill="none" opacity="0.2"/>
+              <path d="M0,10 Q25,5 50,10 T100,10" stroke="#f0f0f0" strokeWidth="0.5" fill="none" opacity="0.3"/>
+              <path d="M0,15 Q25,10 50,15 T100,15" stroke="#e8e8e8" strokeWidth="0.5" fill="none" opacity="0.2"/>
             </pattern>
             
             {/* 地形テクスチャ */}
@@ -82,8 +82,8 @@ const MapBoard: React.FC<MapBoardProps> = ({
           <rect width="800" height="600" fill="url(#oceanGradient)"/>
           <rect width="800" height="600" fill="url(#wavePattern)" opacity="0.5"/>
           
-          {/* 大陸の影 */}
-          <ellipse cx="400" cy="300" rx="380" ry="280" fill="#0a2d4a" opacity="0.3" filter="url(#landGlow)"/>
+          {/* 装飾の影 */}
+          <ellipse cx="400" cy="300" rx="380" ry="280" fill="#f8f8f8" opacity="0.2" filter="url(#landGlow)"/>
         </svg>
       </div>
 
