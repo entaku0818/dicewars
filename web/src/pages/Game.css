@@ -84,33 +84,53 @@
   height: 100%;
   pointer-events: none;
   z-index: 1;
-  background: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    rgba(255, 0, 0, 0.05) 40%,
-    rgba(139, 0, 0, 0.15) 100%
-  );
+  background: 
+    radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      rgba(255, 0, 0, 0.15) 40%,
+      rgba(139, 0, 0, 0.3) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(139, 0, 0, 0.2) 100%
+    );
   animation: doom-pulse 3s ease-in-out infinite;
+  filter: contrast(1.1);
 }
 
 .game-container.doom-warning .doom-background-effect {
-  background: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    rgba(255, 50, 0, 0.03) 40%,
-    rgba(200, 0, 0, 0.08) 100%
-  );
+  background: 
+    radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      rgba(255, 50, 0, 0.1) 40%,
+      rgba(200, 0, 0, 0.2) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 0%,
+      rgba(100, 0, 0, 0.15) 100%
+    );
   animation: doom-warning-pulse 2s ease-in-out infinite;
 }
 
 .game-container.doom-active .doom-background-effect {
-  background: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    rgba(255, 0, 0, 0.1) 30%,
-    rgba(139, 0, 0, 0.25) 100%
-  );
+  background: 
+    radial-gradient(
+      ellipse at 50% 30%,
+      transparent 0%,
+      rgba(255, 0, 0, 0.25) 30%,
+      rgba(139, 0, 0, 0.4) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(139, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0.3) 100%
+    );
   animation: doom-active-pulse 1.5s ease-in-out infinite;
+  filter: contrast(1.2) saturate(1.3);
 }
 
 @keyframes doom-pulse {
@@ -124,37 +144,65 @@
 
 @keyframes doom-warning-pulse {
   0%, 100% {
-    opacity: 0.6;
+    opacity: 0.7;
     transform: scale(1);
+    filter: hue-rotate(0deg);
   }
   50% {
-    opacity: 0.9;
+    opacity: 1;
     transform: scale(1.01);
+    filter: hue-rotate(10deg);
   }
 }
 
 @keyframes doom-active-pulse {
   0%, 100% {
-    opacity: 0.7;
+    opacity: 0.8;
     transform: scale(1);
+    filter: hue-rotate(0deg) brightness(1);
   }
   50% {
     opacity: 1;
     transform: scale(1.02);
+    filter: hue-rotate(-10deg) brightness(1.2);
   }
 }
 
 /* マップボードも影響を受ける */
 .game-container.doom-active .map-board {
   box-shadow: 
-    0 20px 60px rgba(255, 0, 0, 0.3),
-    0 0 0 2px rgba(139, 0, 0, 0.5),
-    inset 0 0 100px rgba(255, 0, 0, 0.1);
+    0 20px 60px rgba(255, 0, 0, 0.5),
+    0 0 0 3px rgba(139, 0, 0, 0.7),
+    inset 0 0 150px rgba(255, 0, 0, 0.2),
+    0 0 200px rgba(255, 0, 0, 0.3);
+  animation: map-doom-shake 4s ease-in-out infinite;
+}
+
+@keyframes map-doom-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(-1px, 1px) rotate(-0.5deg); }
+  20% { transform: translate(1px, -1px) rotate(0.5deg); }
+  30% { transform: translate(-1px, 0) rotate(-0.3deg); }
+  40% { transform: translate(1px, 1px) rotate(0.3deg); }
+  50% { transform: translate(0, -1px) rotate(-0.2deg); }
 }
 
 .game-container.doom-warning .map-board {
   box-shadow: 
-    0 20px 60px rgba(255, 50, 0, 0.2),
-    0 0 0 2px rgba(200, 50, 0, 0.3),
-    inset 0 0 100px rgba(255, 50, 0, 0.05);
+    0 20px 60px rgba(255, 50, 0, 0.3),
+    0 0 0 2px rgba(200, 50, 0, 0.5),
+    inset 0 0 100px rgba(255, 50, 0, 0.1),
+    0 0 150px rgba(255, 100, 0, 0.2);
+  animation: map-warning-pulse 2s ease-in-out infinite;
+}
+
+@keyframes map-warning-pulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% { 
+    transform: scale(1.005);
+    filter: brightness(1.1);
+  }
 }

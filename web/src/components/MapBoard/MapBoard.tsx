@@ -113,11 +113,11 @@ const MapBoard: React.FC<MapBoardProps> = ({
             const owner = territory.ownerId ? players.get(territory.ownerId) || null : null;
             const isSelected = territory.id === selectedTerritoryId;
             const isCurrentPlayerTerritory = territory.ownerId === currentPlayerId;
-            const isEnemyTerritory = territory.ownerId !== currentPlayerId && territory.ownerId !== null;
+            const isNotCurrentPlayerTerritory = territory.ownerId !== currentPlayerId;
             const isHighlighted = attackableTerritories.has(territory.id);
             
             const isClickable = (isCurrentPlayerTerritory && territory.diceCount > 1) || 
-                              (selectedTerritoryId && isEnemyTerritory);
+                              (selectedTerritoryId && isNotCurrentPlayerTerritory);
             
             return (
               <MapTerritory
