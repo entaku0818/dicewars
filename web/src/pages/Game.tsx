@@ -24,14 +24,13 @@ const Game: React.FC = () => {
   return (
     <div className="game-container">
       <h1 className="game-title">DICEWARS</h1>
-      
-      <div className="game-info">
-        <PlayerPanel 
-          players={gameState.players}
-          currentPlayerId={gameState.currentPlayerId}
-          territories={gameState.territories}
-        />
-      </div>
+
+      <GameUI
+        gameState={gameState}
+        battleResult={battleResult}
+        isProcessing={isProcessing}
+        onEndTurn={handleEndTurn}
+      />
 
       <MapBoard
         territories={gameState.territories}
@@ -40,13 +39,14 @@ const Game: React.FC = () => {
         selectedTerritoryId={selectedTerritoryId}
         onTerritoryClick={handleTerritoryClick}
       />
-
-      <GameUI
-        gameState={gameState}
-        battleResult={battleResult}
-        isProcessing={isProcessing}
-        onEndTurn={handleEndTurn}
-      />
+      
+      <div className="game-info">
+        <PlayerPanel 
+          players={gameState.players}
+          currentPlayerId={gameState.currentPlayerId}
+          territories={gameState.territories}
+        />
+      </div>
 
       <VictoryScreen
         winner={gameState.winnerId ? gameState.players.get(gameState.winnerId)?.name || 'Unknown' : ''}
