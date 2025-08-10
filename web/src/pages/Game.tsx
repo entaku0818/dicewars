@@ -5,9 +5,15 @@ import PlayerPanel from '../components/PlayerPanel/PlayerPanel';
 import GameUI from '../components/GameUI/GameUI';
 import VictoryScreen from '../components/VictoryScreen/VictoryScreen';
 import DebugPanel from '../components/DebugPanel/DebugPanel';
+import type { GameConfig } from '../game/types';
 import './Game.css';
 
-const Game: React.FC = () => {
+interface GameProps {
+  config: GameConfig;
+  onBackToTitle: () => void;
+}
+
+const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
   const {
     gameState,
     selectedTerritoryId,
@@ -15,15 +21,16 @@ const Game: React.FC = () => {
     isProcessing,
     handleTerritoryClick,
     handleEndTurn,
-  } = useGame({
-    playerCount: 4,
-    mapSize: 'small',
-    aiDifficulty: 'normal',
-  });
+  } = useGame(config);
 
   return (
     <div className="game-container">
-      <h1 className="game-title">DICEWARS</h1>
+      <div className="game-header">
+        <h1 className="game-title">DICEWARS</h1>
+        <button className="back-to-title" onClick={onBackToTitle}>
+          ← Back to Title
+        </button>
+      </div>
 
       <GameUI
         gameState={gameState}
@@ -51,7 +58,7 @@ const Game: React.FC = () => {
       <VictoryScreen
         winner={gameState.winnerId ? gameState.players.get(gameState.winnerId)?.name || 'Unknown' : ''}
         isVisible={gameState.phase === 'gameOver'}
-        onNewGame={() => window.location.reload()}
+        onNewGame={onBackToTitle}
         stats={{
           turns: gameState.turn,
           territoriesCaptured: 15,
