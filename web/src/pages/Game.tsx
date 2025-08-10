@@ -29,6 +29,8 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
   } = useGame(config);
 
   const [isRolling, setIsRolling] = useState(false);
+  const [showDoomAnnouncement, setShowDoomAnnouncement] = useState(false);
+  const [hasShownDoomAnnouncement, setHasShownDoomAnnouncement] = useState(false);
 
   useEffect(() => {
     if (battleResult) {
@@ -39,33 +41,43 @@ const Game: React.FC<GameProps> = ({ config, onBackToTitle }) => {
 
   const isDoomActive = gameState.doomState?.isActive || false;
   const isDoomWarning = false; // 警告を無効化
-  const isDoomStarting = gameState.doomState?.turnsUntilDoom === 0 && !gameState.doomState?.isActive;
+  
+  // 破滅が始まった瞬間を検出
+  useEffect(() => {
+    if (isDoomActive && !hasShownDoomAnnouncement) {
+      setShowDoomAnnouncement(true);
+      setHasShownDoomAnnouncement(true);
+      setTimeout(() => setShowDoomAnnouncement(false), 3000); // 3秒後に消す
+    }
+  }, [isDoomActive, hasShownDoomAnnouncement]);
 
   return (
     <div className={`game-container ${isDoomActive ? 'doom-active' : ''} ${isDoomWarning ? 'doom-warning' : ''}`}>
       {/* 破滅の時背景エフェクト */}
       {(isDoomActive || isDoomWarning) && (
-        <div className={`doom-background-effect ${isDoomStarting ? 'doom-starting' : ''}`} />
+        <div className={`doom-background-effect ${showDoomAnnouncement ? 'doom-starting' : ''}`} />
       )}
       
       {/* 破滅開始アナウンス */}
-      {isDoomStarting && (
-        <motion.div 
-          className="doom-announcement"
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0, opacity: 0 }}
-          transition={{ duration: 0.5, type: "spring" }}
-        >
-          <motion.h1
-            initial={{ y: -50 }}
-            animate={{ y: 0 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+      <AnimatePresence>
+        {showDoomAnnouncement && (
+          <motion.div 
+            className="doom-announcement"
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.5, type: "spring" }}
           >
-            破滅の時が始まる！！！
-          </motion.h1>
-        </motion.div>
-      )}
+            <motion.h1
+              initial={{ y: -50 }}
+              animate={{ y: 0 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            >
+              破滅の時が始まる！！！
+            </motion.h1>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       <DoomCounter 
         turn={gameState.turn}
