@@ -14,6 +14,7 @@ export interface Territory {
   position: Position;
   adjacentTerritoryIds: string[];
   vertices?: Position[]; // 多角形の頂点
+  powerUp?: PowerUp | null;
 }
 
 export interface Player {
@@ -33,6 +34,7 @@ export interface GameState {
   phase: GamePhase;
   turn: number;
   winnerId: PlayerId | null;
+  activeEffects?: PlayerEffects;
 }
 
 export interface BattleResult {
@@ -47,6 +49,23 @@ export interface BattleResult {
     total: number;
   };
   winner: 'attacker' | 'defender';
+}
+
+export type PowerUpType = 'doubleAttack' | 'ironDefense' | 'teleport';
+
+export interface PowerUp {
+  type: PowerUpType;
+  name: string;
+  description: string;
+  icon: string;
+}
+
+export interface PlayerEffects {
+  [playerId: string]: {
+    doubleAttack?: boolean;
+    ironDefense?: number; // 防御ボーナスの値
+    teleportReady?: boolean;
+  };
 }
 
 export interface GameConfig {

@@ -61,7 +61,7 @@ const MapTerritory: React.FC<MapTerritoryProps> = ({
 
       {/* メインの六角形 */}
       <polygon
-        points={territory.vertices.map(v => `${v.x},${v.y}`).join(' ')}
+        points={territory.vertices?.map(v => `${v.x},${v.y}`).join(' ') || ''}
         fill={owner?.color || '#556B2F'}
         stroke={isSelected ? '#FFD700' : (isHighlighted ? '#FF6B6B' : owner?.color || '#2a4a3a')}
         strokeWidth={isSelected ? '4' : (isHighlighted ? '3' : '2')}
@@ -76,7 +76,7 @@ const MapTerritory: React.FC<MapTerritoryProps> = ({
       
       {/* 地形テクスチャ */}
       <polygon
-        points={territory.vertices.map(v => `${v.x},${v.y}`).join(' ')}
+        points={territory.vertices?.map(v => `${v.x},${v.y}`).join(' ') || ''}
         fill={`url(#terrain-${territory.id})`}
         opacity={0.3}
         pointerEvents="none"
@@ -85,7 +85,7 @@ const MapTerritory: React.FC<MapTerritoryProps> = ({
       {/* 選択時のグロー効果 */}
       {isSelected && (
         <motion.polygon
-          points={territory.vertices.map(v => `${v.x},${v.y}`).join(' ')}
+          points={territory.vertices?.map(v => `${v.x},${v.y}`).join(' ') || ''}
           fill="none"
           stroke="#FFD700"
           strokeWidth="2"
@@ -106,7 +106,7 @@ const MapTerritory: React.FC<MapTerritoryProps> = ({
       {/* ハイライト効果 */}
       {isHighlighted && !isSelected && (
         <motion.polygon
-          points={territory.vertices.map(v => `${v.x},${v.y}`).join(' ')}
+          points={territory.vertices?.map(v => `${v.x},${v.y}`).join(' ') || ''}
           fill="#FF6B6B"
           opacity={0.2}
           pointerEvents="none"
